@@ -1,2 +1,3 @@
-# redis-playground
-Play with raw Redis commands 
+# Redis Playground
+
+Play with raw Redis commands.

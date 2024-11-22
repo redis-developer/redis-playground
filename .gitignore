@@ -1,0 +1,11 @@
+# Mac OS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+
+# IDE and editor files
+.vscode/
+.env
