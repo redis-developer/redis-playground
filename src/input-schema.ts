@@ -20,6 +20,14 @@ export const importDataToRedisSchema = z.object({
   uploadPath: z.string(),
 });
 
+export const resumeImportDataToRedisSchema = z.object({
+  socketId: z.string(),
+  isStopOnError: z.boolean().optional(),
+
+  uploadType: z.string().optional(),
+  uploadPath: z.string(),
+});
+
 //--- types ---
 
 interface IImportStats {
