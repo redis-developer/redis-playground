@@ -1,0 +1,42 @@
+{
+  "name": "redis-playground",
+  "version": "0.0.1",
+  "description": "Play with raw Redis commands.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "start": "npm run build && node dist/index.js",
+    "dev": "concurrently \"tsc --watch\" \"nodemon dist/index.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/lodash": "^4.17.13",
+    "@types/node": "^22.10.0",
+    "@types/socket.io": "^3.0.2",
+    "@types/stream-json": "^1.7.8",
+    "@types/yauzl": "^2.10.3",
+    "concurrently": "^9.1.0",
+    "nodemon": "^3.1.7",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "csv-parse": "^5.6.0",
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "lodash": "^4.17.21",
+    "redis": "^4.7.0",
+    "socket.io": "^4.8.1",
+    "stream-json": "^1.9.1",
+    "yauzl": "^3.2.0",
+    "zod": "^3.23.8"
+  }
+}
