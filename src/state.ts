@@ -29,6 +29,7 @@ interface IImportStreamFileState extends IImportCommonState {
 //#endregion
 
 const socketState: {
+  APP_ROOT_DIR?: any;
   IMPORT_UPLOAD_DIR?: any;
 
   [socketId: string]: IImportFolderFilesState | IImportStreamFileState;

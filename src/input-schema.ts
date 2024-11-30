@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DATA_SOURCE_IDS } from "./config.js";
 
 const zodEncryptedData = z.object({
   encryptedData: z.string(),
@@ -26,6 +27,11 @@ export const resumeImportDataToRedisSchema = z.object({
 
   uploadType: z.string().optional(),
   uploadPath: z.string(),
+});
+
+export const pgLoadDataSourceInRedisSchema = z.object({
+  ids: z.array(z.nativeEnum(DATA_SOURCE_IDS)),
+  isAll: z.boolean().optional(),
 });
 
 //--- types ---
