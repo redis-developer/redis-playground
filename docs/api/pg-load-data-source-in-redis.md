@@ -16,15 +16,26 @@ POST http://localhost:3001/api/pgLoadDataSourceInRedis
 {
   "data": [
     {
-      "id": "fashion-ds",
       "stats": {
         "totalFiles": 11111,
         "processed": 11111,
         "failed": 0,
-        "totalTimeInMs": 12661
+        "totalTimeInMs": 10528
       },
       "importErrors": [],
-      "currentStatus": "success"
+      "currentStatus": "success",
+      "id": "fashion-ds"
+    },
+    {
+      "stats": {
+        "totalFiles": 500,
+        "processed": 500,
+        "failed": 0,
+        "totalTimeInMs": 398
+      },
+      "importErrors": [],
+      "currentStatus": "success",
+      "id": "test-csv-ds"
     }
   ],
   "error": null
