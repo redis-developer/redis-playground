@@ -51,6 +51,22 @@ class RedisWrapper {
     const result = await this.client?.keys(_pattern);
     return result;
   }
+
+  public async rawCommandExecute(_command: string) {
+    const commandArray = _command.trim().split(/\s+/);
+    const result = await this.client?.sendCommand(commandArray);
+    return result;
+  }
+
+  public async dropIndex(_indexName: string) {
+    let result: any;
+    try {
+      result = await this.client?.ft.dropIndex(_indexName);
+    } catch (err) {
+      LoggerCls.error("Error in dropIndex", err);
+    }
+    return result;
+  }
 }
 
 // Singleton class to wrap the Redis client

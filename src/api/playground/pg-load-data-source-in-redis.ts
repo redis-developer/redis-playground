@@ -1,29 +1,17 @@
+import type { IDataSource } from "../../config.js";
+
 import { z } from "zod";
 
 import * as InputSchemas from "../../input-schema.js";
-import { DATA_SOURCES, REDIS_KEY_PREFIX } from "../../config.js";
+import { DATA_SOURCES, REDIS_KEYS } from "../../config.js";
 import { importDataToRedis } from "../import/import-data-to-redis.js";
 import { socketState } from "../../state.js";
 
-const pgLoadDataSourceInRedis = async (
-  input: z.infer<typeof InputSchemas.pgLoadDataSourceInRedisSchema>
-) => {
-  InputSchemas.pgLoadDataSourceInRedisSchema.parse(input); // validate input
+const loadDataSource = async (ds: IDataSource, redisConUrl: string) => {
+  let retObj: any = {};
 
-  let retObjArr: any[] = [];
-
-  const redisConUrl = process.env.REDIS_URL || "";
-
-  if (!redisConUrl) {
-    throw new Error("Redis connection URL is not set !");
-  }
-
-  const filteredDataSources = input.isAll
-    ? DATA_SOURCES
-    : DATA_SOURCES.filter((ds) => input.ids.includes(ds.id));
-
-  for (const ds of filteredDataSources) {
-    const dsKeyPrefix = REDIS_KEY_PREFIX.APP + ds.keyPrefix;
+  if (ds && redisConUrl) {
+    const dsKeyPrefix = REDIS_KEYS.PREFIX.APP + ds.keyPrefix;
     const dsUploadPath = socketState.APP_ROOT_DIR + ds.uploadPath;
 
     const input: z.infer<typeof InputSchemas.importDataToRedisSchema> = {
@@ -33,10 +21,44 @@ const pgLoadDataSourceInRedis = async (
 
       uploadType: ds.uploadType,
       uploadPath: dsUploadPath,
+      jsFunctionString: ds.jsFunctionString,
     };
-    const retObj = await importDataToRedis(input);
-    retObj.id = ds.id;
-    retObjArr.push(retObj);
+    retObj = await importDataToRedis(input);
+    retObj.dataSourceId = ds.dataSourceId;
+  }
+  return retObj;
+};
+
+const pgLoadDataSourceInRedis = async (
+  input: z.infer<typeof InputSchemas.pgLoadDataSourceInRedisSchema>
+) => {
+  InputSchemas.pgLoadDataSourceInRedisSchema.parse(input); // validate input
+
+  let retObjArr: any[] = [];
+  let filteredDataSources: IDataSource[] = [];
+  const redisConUrl = process.env.REDIS_URL || "";
+
+  if (!redisConUrl) {
+    throw new Error("Redis connection URL is not set !");
+  }
+
+  if (!input.dataSourceIds) {
+    input.dataSourceIds = [];
+  }
+
+  if (input.isAll) {
+    filteredDataSources = DATA_SOURCES;
+  } else if (input.dataSourceIds.length > 0) {
+    filteredDataSources = DATA_SOURCES.filter((ds) =>
+      input.dataSourceIds.includes(ds.dataSourceId)
+    );
+  }
+
+  if (filteredDataSources.length > 0) {
+    for (const ds of filteredDataSources) {
+      const retObj = await loadDataSource(ds, redisConUrl);
+      retObjArr.push(retObj);
+    }
   }
 
   return retObjArr;

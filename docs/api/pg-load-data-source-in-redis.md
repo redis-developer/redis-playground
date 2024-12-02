@@ -5,8 +5,8 @@
 ```json
 POST http://localhost:3001/api/pgLoadDataSourceInRedis
 {
-"isAll":false,
-"ids":["fashion-ds"]
+  "isAll":false,
+  "dataSourceIds":["FASHION_DS"]
 }
 ```
 
@@ -20,22 +20,22 @@ POST http://localhost:3001/api/pgLoadDataSourceInRedis
         "totalFiles": 11111,
         "processed": 11111,
         "failed": 0,
-        "totalTimeInMs": 10528
+        "totalTimeInMs": 10235
       },
       "importErrors": [],
       "currentStatus": "success",
-      "id": "fashion-ds"
+      "dataSourceId": "FASHION_DS"
     },
     {
       "stats": {
         "totalFiles": 500,
         "processed": 500,
         "failed": 0,
-        "totalTimeInMs": 398
+        "totalTimeInMs": 394
       },
       "importErrors": [],
       "currentStatus": "success",
-      "id": "test-csv-ds"
+      "dataSourceId": "TEST_CSV_DS"
     }
   ],
   "error": null

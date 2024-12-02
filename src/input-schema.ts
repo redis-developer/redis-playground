@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DATA_SOURCE_IDS } from "./config.js";
+import { DATA_SOURCE_ID, DB_INDEX_ID } from "./config.js";
 
 const zodEncryptedData = z.object({
   encryptedData: z.string(),
@@ -30,7 +30,12 @@ export const resumeImportDataToRedisSchema = z.object({
 });
 
 export const pgLoadDataSourceInRedisSchema = z.object({
-  ids: z.array(z.nativeEnum(DATA_SOURCE_IDS)),
+  dataSourceIds: z.array(z.nativeEnum(DATA_SOURCE_ID)),
+  isAll: z.boolean().optional(),
+});
+
+export const pgCreateIndexInRedisSchema = z.object({
+  dbIndexIds: z.array(z.nativeEnum(DB_INDEX_ID)),
   isAll: z.boolean().optional(),
 });
 
