@@ -9,11 +9,13 @@ import { fileURLToPath } from "node:url";
 import { router } from "./routes.js";
 import { socketState } from "./state.js";
 import { LoggerCls } from "./utils/logger.js";
+import { RedisWrapperST } from "./utils/redis.js";
 
 //------ Constants
 // process.env.PORT is dynamic port
 let PORT = process.env.PORT || process.env.PORT_BACKEND || "3001";
 process.env.PORT_BACKEND = PORT;
+const REDIS_URL = process.env.REDIS_URL || "";
 
 const API_PREFIX = "/api";
 
@@ -61,9 +63,29 @@ app.use(express.json());
 
 app.use(API_PREFIX, router);
 
-httpServer.listen(parseInt(PORT), () => {
+httpServer.listen(parseInt(PORT), async () => {
   LoggerCls.info(`Server running on port ${PORT}`);
+
+  const redisWrapperST = RedisWrapperST.setInstance(REDIS_URL);
+  await redisWrapperST.connect();
 });
+
+const gracefulShutdown = async () => {
+  try {
+    const redisWrapperST = RedisWrapperST.getInstance();
+    await redisWrapperST.disconnect();
+    process.exit(0);
+  } catch (error) {
+    LoggerCls.error(
+      "Error during graceful shutdown:",
+      LoggerCls.getPureError(error)
+    );
+    process.exit(1);
+  }
+};
+
+process.on("SIGTERM", gracefulShutdown);
+process.on("SIGINT", gracefulShutdown);
 
 process.on("unhandledRejection", (reason, promise) => {
   LoggerCls.error("Unhandled promise Rejection :", {
@@ -72,6 +94,7 @@ process.on("unhandledRejection", (reason, promise) => {
   });
 });
 
-process.on("uncaughtException", (error) => {
+process.on("uncaughtException", async (error) => {
   LoggerCls.error("Uncaught Exception:", LoggerCls.getPureError(error));
+  await gracefulShutdown();
 });

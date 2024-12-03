@@ -46,9 +46,67 @@ class RedisWrapper {
     return result;
   }
 
-  public async getKeys(_pattern?: string) {
+  public async getAllKeys(_pattern?: string) {
     _pattern = _pattern || "*";
     const result = await this.client?.keys(_pattern);
+    return result;
+  }
+
+  public async getKeys(fetchLimit: number, _pattern?: string) {
+    let keys: string[] = [];
+
+    if (fetchLimit > 0) {
+      _pattern = _pattern || "*";
+      let cursor = 0;
+      let scanIterationCount = 100;
+      if (scanIterationCount > fetchLimit) {
+        scanIterationCount = fetchLimit;
+      }
+
+      do {
+        // SCAN returns [cursor, keys] array
+        const result = await this.client?.scan(cursor, {
+          MATCH: _pattern,
+          COUNT: scanIterationCount, //soft limit
+        });
+
+        if (result) {
+          const { cursor: newCursor, keys: scanKeys } = result;
+          cursor = newCursor;
+          if (scanKeys?.length) {
+            keys.push(...scanKeys);
+          }
+
+          if (keys.length >= fetchLimit) {
+            break;
+          } else if (fetchLimit - keys.length < scanIterationCount) {
+            // last iteration
+            scanIterationCount = fetchLimit - keys.length;
+          }
+        } else {
+          break;
+        }
+      } while (cursor !== 0);
+    } else {
+      throw new Error(
+        "fetchLimit must be greater than 0 or use getAllKeys instead!"
+      );
+    }
+
+    if (keys.length > fetchLimit) {
+      keys = keys.slice(0, fetchLimit);
+    }
+
+    return keys;
+  }
+
+  public async mGet(_keys: string[]) {
+    const result = await this.client?.mGet(_keys);
+    return result;
+  }
+
+  public async jsonMGet(_keys: string[]) {
+    const result = await this.client?.json.mGet(_keys, ".");
     return result;
   }
 

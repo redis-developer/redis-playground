@@ -6,6 +6,7 @@ import { pgLoadDataSourceInRedis } from "./api/playground/pg-load-data-source-in
 import { pgCreateIndexInRedis } from "./api/playground/pg-create-index-in-redis.js";
 import { pgGetQueryDataById } from "./api/playground/pg-get-query-data-by-id.js";
 import { pgGetQueryNavbarData } from "./api/playground/pg-get-query-navbar-data.js";
+import { pgGetSampleDataByDataSourceId } from "./api/playground/pg-get-sample-data-by-data-source-id.js";
 
 const router = express.Router();
 
@@ -84,5 +85,27 @@ router.post("/pgGetQueryNavbarData", async (req: Request, res: Response) => {
 
   res.send(result);
 });
+
+router.post(
+  "/pgGetSampleDataByDataSourceId",
+  async (req: Request, res: Response) => {
+    const result: any = {
+      data: null,
+      error: null,
+    };
+    const input = req.body;
+
+    try {
+      result.data = await pgGetSampleDataByDataSourceId(input);
+    } catch (err) {
+      err = LoggerCls.getPureError(err);
+      LoggerCls.error("/pgGetSampleDataByDataSourceId API failed !", err);
+      result.error = err;
+      res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+    }
+
+    res.send(result);
+  }
+);
 
 export { router };

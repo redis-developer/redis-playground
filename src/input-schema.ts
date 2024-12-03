@@ -45,6 +45,11 @@ export const pgGetQueryDataByIdSchema = z.object({
   ),
 });
 
+export const pgGetSampleDataByDataSourceIdSchema = z.object({
+  dataSourceId: z.nativeEnum(DATA_SOURCE_ID),
+  dataCount: z.number().optional(),
+});
+
 //--- types ---
 
 interface IImportStats {
