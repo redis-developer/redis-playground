@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { DATA_SOURCE_ID, DB_INDEX_ID } from "./config.js";
-
+import { queryIdDataMap } from "./data/queries/index.js";
 const zodEncryptedData = z.object({
   encryptedData: z.string(),
   iv: z.string(),
@@ -37,6 +37,12 @@ export const pgLoadDataSourceInRedisSchema = z.object({
 export const pgCreateIndexInRedisSchema = z.object({
   dbIndexIds: z.array(z.nativeEnum(DB_INDEX_ID)),
   isAll: z.boolean().optional(),
+});
+
+export const pgGetQueryDataByIdSchema = z.object({
+  queryIds: z.array(
+    z.enum(Object.keys(queryIdDataMap) as [string, ...string[]])
+  ),
 });
 
 //--- types ---

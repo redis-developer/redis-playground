@@ -1,7 +1,7 @@
 let sampleProductJson = {
   productId: 45982,
   price: 399,
-  brandName: "tokyo-talkies",
+  brandName: "tokyo_talkies",
   gender: "women",
   masterCategoryType: "apparel",
   subCategoryType: "topwear",

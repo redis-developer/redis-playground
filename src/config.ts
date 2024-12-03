@@ -25,6 +25,11 @@ interface IDbIndex {
   dbIndexQuery: string;
   dataSourceId: DATA_SOURCE_ID;
 }
+interface IQueryViewData {
+  query: string;
+  dbIndexId: string;
+  dataSourceId: string;
+}
 
 const DATA_SOURCES: IDataSource[] = [
   {
@@ -39,13 +44,13 @@ const DATA_SOURCES: IDataSource[] = [
         jsonObj.productId = parseInt(jsonObj.productId);
         jsonObj.price = parseInt(jsonObj.price);
 
-        jsonObj.brandName = jsonObj.brandName.trim().toLowerCase().replace(/ /g, '-');
-        jsonObj.gender = jsonObj.gender.trim().toLowerCase().replace(/ /g, '-');
+        jsonObj.brandName = jsonObj.brandName.trim().toLowerCase().replace(/ /g, '_');
+        jsonObj.gender = jsonObj.gender.trim().toLowerCase();
 
-        jsonObj.masterCategoryType = jsonObj.masterCategory_typeName.trim().toLowerCase().replace(/ /g, '-');
+        jsonObj.masterCategoryType = jsonObj.masterCategory_typeName.trim().toLowerCase().replace(/ /g, '_');
         delete jsonObj.masterCategory_typeName;
 
-        jsonObj.subCategoryType = jsonObj.subCategory_typeName.trim().toLowerCase().replace(/ /g, '-');
+        jsonObj.subCategoryType = jsonObj.subCategory_typeName.trim().toLowerCase().replace(/ /g, '_');
         delete jsonObj.subCategory_typeName;
 
         jsonObj.productDescription = jsonObj.productDescriptors_description_value;
@@ -93,4 +98,4 @@ const REDIS_KEYS = {
 
 export { DATA_SOURCES, DATA_SOURCE_ID, REDIS_KEYS, DB_INDEXES, DB_INDEX_ID };
 
-export type { IDataSource, IDbIndex };
+export type { IDataSource, IDbIndex, IQueryViewData };
