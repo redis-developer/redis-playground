@@ -5,7 +5,7 @@ import {
 } from "../../../../config.js";
 
 const queryViewData: IQueryViewData = {
-  query: `FT.SEARCH {dbIndexName} "@brandName:{nike}"`,
+  query: `FT.SEARCH '{dbIndexName}' '@brandName:{nike}'`,
   dbIndexId: DB_INDEX_ID.FASHION_DS_SEARCH_INDEX,
   dataSourceId: DATA_SOURCE_ID.FASHION_DS,
 };

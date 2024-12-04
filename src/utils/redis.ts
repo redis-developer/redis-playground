@@ -111,7 +111,24 @@ class RedisWrapper {
   }
 
   public async rawCommandExecute(_command: string) {
-    const commandArray = _command.trim().split(/\s+/);
+    function splitQuery(query: string) {
+      /**
+       inputQuery = "FT.SEARCH '{dbIndexName}' '@brandName:{nike} @gender:{men}'";
+       output = ["FT.SEARCH", "{dbIndexName}", "@brandName:{nike} @gender:{men}"]
+       */
+      let retArr: string[] = [];
+      //match a sequence of characters enclosed in single quotes OR a sequence of non-space characters
+      const regex = /'[^']*'|\S+/g;
+      const matches = query.match(regex);
+      if (matches) {
+        //Remove the surrounding single quotes from the matched elements
+        retArr = matches.map((match) => match.replace(/^'|'$/g, ""));
+      }
+      return retArr;
+    }
+
+    // const commandArray = _command.trim().split(/\s+/);
+    const commandArray = splitQuery(_command);
     const result = await this.client?.sendCommand(commandArray);
     return result;
   }

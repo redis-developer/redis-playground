@@ -1,11 +1,13 @@
 import { z } from "zod";
 import { DATA_SOURCE_ID, DB_INDEX_ID } from "./config.js";
 import { queryIdDataMap } from "./data/queries/index.js";
+
 const zodEncryptedData = z.object({
   encryptedData: z.string(),
   iv: z.string(),
   authTag: z.string(),
 });
+const zodQueryId = z.enum(Object.keys(queryIdDataMap) as [string, ...string[]]);
 
 export const importDataToRedisSchema = z.object({
   redisConUrl: z.string().optional(),
@@ -40,9 +42,7 @@ export const pgCreateIndexInRedisSchema = z.object({
 });
 
 export const pgGetQueryDataByIdSchema = z.object({
-  queryIds: z.array(
-    z.enum(Object.keys(queryIdDataMap) as [string, ...string[]])
-  ),
+  queryIds: z.array(zodQueryId),
 });
 
 export const pgGetSampleDataByDataSourceIdSchema = z.object({
@@ -53,6 +53,11 @@ export const pgGetSampleDataByDataSourceIdSchema = z.object({
 export const pgGetDbIndexByIdSchema = z.object({
   dbIndexIds: z.array(z.nativeEnum(DB_INDEX_ID)),
   isAll: z.boolean().optional(),
+});
+
+export const pgRunQuerySchema = z.object({
+  customQuery: z.string().optional(),
+  queryId: zodQueryId,
 });
 
 //--- types ---

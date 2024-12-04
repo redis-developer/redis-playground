@@ -5,6 +5,7 @@ import { z } from "zod";
 import * as InputSchemas from "../../input-schema.js";
 import { DATA_SOURCES, DB_INDEXES, REDIS_KEYS } from "../../config.js";
 import { RedisWrapperST } from "../../utils/redis.js";
+import { getFilteredDbIndexes } from "./pg-get-db-index-by-id.js";
 
 const createDbIndex = async (dbIndex: IDbIndex) => {
   let retObj: any = {};
@@ -42,19 +43,7 @@ const pgCreateIndexInRedis = async (
   InputSchemas.pgCreateIndexInRedisSchema.parse(input); // validate input
 
   let retObjArr: any[] = [];
-  let filteredDbIndexes: typeof DB_INDEXES = [];
-
-  if (!input.dbIndexIds) {
-    input.dbIndexIds = [];
-  }
-
-  if (input.isAll) {
-    filteredDbIndexes = DB_INDEXES;
-  } else if (input.dbIndexIds.length > 0) {
-    filteredDbIndexes = DB_INDEXES.filter((dbIndex) =>
-      input.dbIndexIds.includes(dbIndex.dbIndexId)
-    );
-  }
+  let filteredDbIndexes = getFilteredDbIndexes(input.dbIndexIds, input.isAll);
 
   if (filteredDbIndexes.length > 0) {
     for (const dbIndex of filteredDbIndexes) {
