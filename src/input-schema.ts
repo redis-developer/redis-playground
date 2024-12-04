@@ -50,6 +50,11 @@ export const pgGetSampleDataByDataSourceIdSchema = z.object({
   dataCount: z.number().optional(),
 });
 
+export const pgGetDbIndexByIdSchema = z.object({
+  dbIndexIds: z.array(z.nativeEnum(DB_INDEX_ID)),
+  isAll: z.boolean().optional(),
+});
+
 //--- types ---
 
 interface IImportStats {
