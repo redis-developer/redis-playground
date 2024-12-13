@@ -19,8 +19,7 @@ let sampleProductJson = {
   usage: "Casual",
 };
 
-const fashionSearchIndex = `
-FT.CREATE {dbIndexName}
+const fashionSearchIndex = `FT.CREATE {dbIndexName}
  ON JSON
  PREFIX 1 {keyPrefix}
  SCHEMA

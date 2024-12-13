@@ -3,7 +3,7 @@ import type { IDataSource } from "../../config.js";
 import { z } from "zod";
 
 import * as InputSchemas from "../../input-schema.js";
-import { DATA_SOURCES, REDIS_KEYS } from "../../config.js";
+import { getFilteredDataSources } from "../../config.js";
 import { importDataToRedis } from "../import/import-data-to-redis.js";
 import { socketState } from "../../state.js";
 
@@ -11,13 +11,12 @@ const loadDataSource = async (ds: IDataSource, redisConUrl: string) => {
   let retObj: any = {};
 
   if (ds && redisConUrl) {
-    const dsKeyPrefix = REDIS_KEYS.PREFIX.APP + ds.keyPrefix;
     const dsUploadPath = socketState.APP_ROOT_DIR + ds.uploadPath;
 
     const input: z.infer<typeof InputSchemas.importDataToRedisSchema> = {
       redisConUrl: redisConUrl,
       idField: ds.idField,
-      keyPrefix: dsKeyPrefix,
+      keyPrefix: ds.keyPrefix,
 
       uploadType: ds.uploadType,
       uploadPath: dsUploadPath,
@@ -35,7 +34,6 @@ const pgLoadDataSourceInRedis = async (
   InputSchemas.pgLoadDataSourceInRedisSchema.parse(input); // validate input
 
   let retObjArr: any[] = [];
-  let filteredDataSources: IDataSource[] = [];
   const redisConUrl = process.env.REDIS_URL || "";
 
   if (!redisConUrl) {
@@ -46,13 +44,10 @@ const pgLoadDataSourceInRedis = async (
     input.dataSourceIds = [];
   }
 
-  if (input.isAll) {
-    filteredDataSources = DATA_SOURCES;
-  } else if (input.dataSourceIds.length > 0) {
-    filteredDataSources = DATA_SOURCES.filter((ds) =>
-      input.dataSourceIds.includes(ds.dataSourceId)
-    );
-  }
+  let filteredDataSources = getFilteredDataSources(
+    input.dataSourceIds,
+    input.isAll
+  );
 
   if (filteredDataSources.length > 0) {
     for (const ds of filteredDataSources) {

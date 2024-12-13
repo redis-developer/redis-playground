@@ -6,7 +6,6 @@ import {
   MIN_REDIS_SAMPLE_DATA_COUNT,
   MAX_REDIS_SAMPLE_DATA_COUNT,
   DATA_SOURCES,
-  REDIS_KEYS,
 } from "../../config.js";
 
 const pgGetSampleDataByDataSourceId = async (
@@ -25,8 +24,7 @@ const pgGetSampleDataByDataSourceId = async (
       (ds) => ds.dataSourceId === input.dataSourceId
     );
     if (dataSource) {
-      const dsKeyPrefix = REDIS_KEYS.PREFIX.APP + dataSource.keyPrefix;
-      const pattern = dsKeyPrefix + "*";
+      const pattern = dataSource.keyPrefix + "*";
       const keys = await redisWrapperST.getKeys(dataCount, pattern);
       const values = await redisWrapperST.jsonMGet(keys);
       if (values?.length) {
