@@ -66,6 +66,39 @@ const DISABLE_JS_FLAGS = {
   ASYNC: true,
 };
 
+const REDIS_ALLOWED_COMMANDS = [
+  // RediSearch commands
+  "FT.INFO",
+  "FT.SEARCH",
+  "FT._LIST",
+  "FT.EXPLAIN",
+
+  // RedisJSON commands
+  "JSON.GET",
+  "JSON.MGET",
+  "JSON.TYPE",
+  "JSON.STRLEN",
+  "JSON.OBJKEYS",
+  "JSON.OBJLEN",
+  "JSON.DEBUG",
+  "JSON.RESP",
+
+  // Redis Core read commands
+  "GET",
+  "MGET",
+  "EXISTS",
+  "TYPE",
+  "STRLEN",
+  "LLEN",
+  "SCARD",
+  "ZCARD",
+  "HLEN",
+  "HGET",
+  "HMGET",
+  "HGETALL",
+  "HEXISTS",
+];
+
 type DisableJsFlagsType = {
   [key in keyof typeof DISABLE_JS_FLAGS]: boolean;
 };
@@ -76,6 +109,7 @@ export {
   DISABLE_JS_FLAGS,
   UPLOAD_TYPES_FOR_IMPORT,
   ImportStatus,
+  REDIS_ALLOWED_COMMANDS,
 };
 
 export type { DisableJsFlagsType };

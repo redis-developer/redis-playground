@@ -1,8 +1,34 @@
 import { createClient } from "redis";
 
 import { LoggerCls } from "./logger.js";
-
+import { REDIS_ALLOWED_COMMANDS } from "./constants.js";
 type RedisClientType = ReturnType<typeof createClient>;
+
+function isCommandAllowed(_commandKeyword: string) {
+  let isAllowed = false;
+
+  if (_commandKeyword && REDIS_ALLOWED_COMMANDS.includes(_commandKeyword)) {
+    isAllowed = true;
+  }
+
+  return isAllowed;
+}
+
+function splitQuery(query: string) {
+  /**
+       inputQuery = "FT.SEARCH '{dbIndexName}' '@brandName:{nike} @gender:{men}'";
+       output = ["FT.SEARCH", "{dbIndexName}", "@brandName:{nike} @gender:{men}"]
+       */
+  let retArr: string[] = [];
+  //match a sequence of characters enclosed in single quotes OR a sequence of non-space characters
+  const regex = /'[^']*'|\S+/g;
+  const matches = query.match(regex);
+  if (matches) {
+    //Remove the surrounding single quotes from the matched elements
+    retArr = matches.map((match) => match.replace(/^'|'$/g, ""));
+  }
+  return retArr;
+}
 
 class RedisWrapper {
   client: RedisClientType | null = null;
@@ -111,24 +137,11 @@ class RedisWrapper {
   }
 
   public async rawCommandExecute(_command: string) {
-    function splitQuery(query: string) {
-      /**
-       inputQuery = "FT.SEARCH '{dbIndexName}' '@brandName:{nike} @gender:{men}'";
-       output = ["FT.SEARCH", "{dbIndexName}", "@brandName:{nike} @gender:{men}"]
-       */
-      let retArr: string[] = [];
-      //match a sequence of characters enclosed in single quotes OR a sequence of non-space characters
-      const regex = /'[^']*'|\S+/g;
-      const matches = query.match(regex);
-      if (matches) {
-        //Remove the surrounding single quotes from the matched elements
-        retArr = matches.map((match) => match.replace(/^'|'$/g, ""));
-      }
-      return retArr;
-    }
-
     // const commandArray = _command.trim().split(/\s+/);
     const commandArray = splitQuery(_command);
+    if (commandArray?.length && !isCommandAllowed(commandArray[0])) {
+      throw new Error("Command not allowed");
+    }
     const result = await this.client?.sendCommand(commandArray);
     return result;
   }

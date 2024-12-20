@@ -15,7 +15,7 @@ import { RedisWrapperST } from "./utils/redis.js";
 // process.env.PORT is dynamic port
 let PORT = process.env.PORT || process.env.PORT_BACKEND || "3001";
 process.env.PORT_BACKEND = PORT;
-const REDIS_URL = process.env.REDIS_URL || "";
+const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
 const API_PREFIX = "/api";
 

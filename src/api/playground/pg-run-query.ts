@@ -19,6 +19,8 @@ const pgRunQuery = async (
     if (queryData?.query) {
       result = redisWrapperST.rawCommandExecute(queryData.query);
     }
+  } else {
+    throw new Error("No query provided!");
   }
   return result;
 };
