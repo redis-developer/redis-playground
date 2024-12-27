@@ -136,10 +136,17 @@ class RedisWrapper {
     return result;
   }
 
-  public async rawCommandExecute(_command: string) {
+  public async rawCommandExecute(
+    _command: string,
+    _skipCmdCheck: boolean = false
+  ) {
     // const commandArray = _command.trim().split(/\s+/);
     const commandArray = splitQuery(_command);
-    if (commandArray?.length && !isCommandAllowed(commandArray[0])) {
+    if (
+      commandArray?.length &&
+      !_skipCmdCheck &&
+      !isCommandAllowed(commandArray[0])
+    ) {
       throw new Error("Command not allowed");
     }
     const result = await this.client?.sendCommand(commandArray);

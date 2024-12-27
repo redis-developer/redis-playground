@@ -12,7 +12,10 @@ const createDbIndex = async (dbIndex: IDbIndex) => {
 
   if (dbIndex) {
     await redisWrapperST.dropIndex(dbIndex.dbIndexName);
-    const status = await redisWrapperST.rawCommandExecute(dbIndex.dbIndexQuery);
+    const status = await redisWrapperST.rawCommandExecute(
+      dbIndex.dbIndexQuery,
+      true
+    );
 
     retObj = {
       dbIndexId: dbIndex.dbIndexId,
