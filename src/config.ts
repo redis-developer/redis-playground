@@ -1,4 +1,5 @@
 import { fashionSearchIndex } from "./data/db-indexes/fashion-ds/search-index.js";
+import { userSearchIndex } from "./data/db-indexes/user-ds/search-index.js";
 import { UPLOAD_TYPES_FOR_IMPORT } from "./utils/constants.js";
 
 //#region interfaces and enums
@@ -9,6 +10,7 @@ enum DATA_SOURCE_ID {
 }
 enum DB_INDEX_ID {
   FASHION_DS_SEARCH_INDEX = "FASHION_DS_SEARCH_INDEX",
+  USER_DS_SEARCH_INDEX = "USER_DS_SEARCH_INDEX",
 }
 
 interface IDataSource {
@@ -182,6 +184,12 @@ const DB_INDEXES_RAW: IDbIndex[] = [
     dbIndexName: `${REDIS_KEYS.PREFIX.APP}fashionSearchIndex`,
     dbIndexQuery: fashionSearchIndex,
     dataSourceId: DATA_SOURCE_ID.FASHION_DS,
+  },
+  {
+    dbIndexId: DB_INDEX_ID.USER_DS_SEARCH_INDEX,
+    dbIndexName: `${REDIS_KEYS.PREFIX.APP}userSearchIndex`,
+    dbIndexQuery: userSearchIndex,
+    dataSourceId: DATA_SOURCE_ID.USER_DS,
   },
 ];
 const DB_INDEXES = getDbIndexes();
