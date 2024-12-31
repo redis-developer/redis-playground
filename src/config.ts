@@ -4,7 +4,7 @@ import { UPLOAD_TYPES_FOR_IMPORT } from "./utils/constants.js";
 //#region interfaces and enums
 enum DATA_SOURCE_ID {
   FASHION_DS = "FASHION_DS",
-  TEST_CSV_DS = "TEST_CSV_DS",
+  USER_DS = "USER_DS",
   TEST_JSON_ARR_DS = "TEST_JSON_ARR_DS",
 }
 enum DB_INDEX_ID {
@@ -138,12 +138,33 @@ const DATA_SOURCES: IDataSource[] = [
     `,
   },
   {
-    dataSourceId: DATA_SOURCE_ID.TEST_CSV_DS,
+    dataSourceId: DATA_SOURCE_ID.USER_DS,
     uploadType: UPLOAD_TYPES_FOR_IMPORT.CSV_FILE,
-    uploadPath: "data/data-sources/test-csv-ds/ecommerce-test.csv",
-    idField: "productId",
-    keyPrefix: `${REDIS_KEYS.PREFIX.APP}csvSource:`,
-    jsFunctionString: "",
+    uploadPath: "data/data-sources/user-ds/user-data.csv",
+    idField: "userId",
+    keyPrefix: `${REDIS_KEYS.PREFIX.APP}user:`,
+    jsFunctionString: `function formatter(jsonObj) { 
+
+        let retObj = {};
+        
+        retObj.userId = parseInt(jsonObj.userId);
+        retObj.firstName = jsonObj.firstName.trim();
+        retObj.lastName = jsonObj.lastName.trim();
+        retObj.email = jsonObj.email.trim().toLowerCase();
+        retObj.phoneNumber = jsonObj.phoneNumber;
+
+        retObj.address = jsonObj.address.trim();
+        retObj.city = jsonObj.city.trim().toUpperCase();
+        retObj.state = jsonObj.state.trim().toUpperCase();
+        retObj.zipCode = parseInt(jsonObj.zipCode);  
+        retObj.country = jsonObj.country.trim().toUpperCase();
+
+        retObj.gender = jsonObj.gender.trim().toUpperCase();
+        retObj.company = jsonObj.company.trim().toUpperCase();
+        retObj.jobTitle = jsonObj.jobTitle.trim();
+
+        return retObj; 
+      }`,
   },
   {
     dataSourceId: DATA_SOURCE_ID.TEST_JSON_ARR_DS,

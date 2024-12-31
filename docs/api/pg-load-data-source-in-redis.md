@@ -5,8 +5,8 @@
 ```json
 POST http://localhost:3001/api/pgLoadDataSourceInRedis
 {
-  "isAll":false,
-  "dataSourceIds":["FASHION_DS"]
+  "isAll":true,
+  //"dataSourceIds":["FASHION_DS"]
 }
 ```
 
@@ -35,7 +35,7 @@ POST http://localhost:3001/api/pgLoadDataSourceInRedis
       },
       "importErrors": [],
       "currentStatus": "success",
-      "dataSourceId": "TEST_CSV_DS"
+      "dataSourceId": "USER_DS"
     }
   ],
   "error": null
