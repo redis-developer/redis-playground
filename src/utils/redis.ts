@@ -21,18 +21,27 @@ function splitQuery(query: string) {
        */
   let retArr: string[] = [];
 
+  query = query.replace(/\\"/g, "ESCAPED_D_QUOTE");
+  query = query.replace(/\\'/g, "ESCAPED_S_QUOTE");
+  query = query.replace(/\\\\x/g, "\\x");
+
   // Match either:
-  // 1. A sequence of characters between quotes (handling escaped quotes inside)
+  // 1. A sequence of characters between quotes
   // 2. A sequence of non-space characters
-  const regex = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\S+/g;
+  const regex = /('[^']*'|"[^"]*"|\S+)/g;
+  //  const regex = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\S+/g;//(handling escaped quotes inside)
+
   const matches = query.match(regex);
 
   if (matches) {
-    retArr = matches.map((match) => {
+    retArr = matches.map((_match) => {
       // Remove surrounding quotes if they exist
-      match = match.replace(/^['"]|['"]$/g, "");
+      _match = _match.replace(/^['"]|['"]$/g, "");
 
-      return match;
+      _match = _match.replace(/ESCAPED_D_QUOTE/g, '\\"');
+      _match = _match.replace(/ESCAPED_S_QUOTE/g, "\\'");
+
+      return _match;
     });
   }
 

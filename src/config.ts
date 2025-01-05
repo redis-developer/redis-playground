@@ -1,5 +1,6 @@
 import { fashionSearchIndex } from "./data/db-indexes/fashion-ds/search-index.js";
 import { userSearchIndex } from "./data/db-indexes/user-ds/search-index.js";
+import { bikeVssIndex } from "./data/db-indexes/bike-ds/vss-index.js";
 import { UPLOAD_TYPES_FOR_IMPORT } from "./utils/constants.js";
 
 //#region interfaces and enums
@@ -12,6 +13,7 @@ enum DATA_SOURCE_ID {
 enum DB_INDEX_ID {
   FASHION_DS_SEARCH_INDEX = "FASHION_DS_SEARCH_INDEX",
   USER_DS_SEARCH_INDEX = "USER_DS_SEARCH_INDEX",
+  BIKE_DS_VSS_INDEX = "BIKE_DS_VSS_INDEX",
 }
 
 interface IDataSource {
@@ -182,7 +184,7 @@ const DATA_SOURCES: IDataSource[] = [
     uploadType: UPLOAD_TYPES_FOR_IMPORT.REDIS_COMMANDS_FILE,
     uploadPath: "data/data-sources/bike-ds/bike-data.redis",
     //idField: "",
-    //keyPrefix: "",
+    keyPrefix: `${REDIS_KEYS.PREFIX.APP}bike:`, //key in data source file
     //jsFunctionString: "",
   },
 ];
@@ -199,6 +201,12 @@ const DB_INDEXES_RAW: IDbIndex[] = [
     dbIndexName: `${REDIS_KEYS.PREFIX.APP}userSearchIndex`,
     dbIndexQuery: userSearchIndex,
     dataSourceId: DATA_SOURCE_ID.USER_DS,
+  },
+  {
+    dbIndexId: DB_INDEX_ID.BIKE_DS_VSS_INDEX,
+    dbIndexName: `${REDIS_KEYS.PREFIX.APP}bikeVssIndex`,
+    dbIndexQuery: bikeVssIndex,
+    dataSourceId: DATA_SOURCE_ID.BIKE_DS,
   },
 ];
 const DB_INDEXES = getDbIndexes();
