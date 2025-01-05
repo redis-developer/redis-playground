@@ -23,27 +23,51 @@ function splitQuery(query: string) {
 
   query = query.replace(/\\"/g, "ESCAPED_D_QUOTE");
   query = query.replace(/\\'/g, "ESCAPED_S_QUOTE");
-  query = query.replace(/\\\\x/g, "\\x");
+  query = query.replace(/\\t/g, "ESCAPED_T");
+  query = query.replace(/\\n/g, "ESCAPED_N");
+  query = query.replace(/\\r/g, "ESCAPED_R");
+  query = query.replace(/\\\\/g, "ESCAPED_B");
 
   // Match either:
   // 1. A sequence of characters between quotes
   // 2. A sequence of non-space characters
+
+  //const regex = /'[^']*'|\S+/g;
   const regex = /('[^']*'|"[^"]*"|\S+)/g;
-  //  const regex = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\S+/g;//(handling escaped quotes inside)
 
   const matches = query.match(regex);
 
   if (matches) {
     retArr = matches.map((_match) => {
       // Remove surrounding quotes if they exist
+      //_match = _match.replace(/^'|'$/g, "");
       _match = _match.replace(/^['"]|['"]$/g, "");
 
-      _match = _match.replace(/ESCAPED_D_QUOTE/g, '\\"');
-      _match = _match.replace(/ESCAPED_S_QUOTE/g, "\\'");
+      _match = _match.replace(/ESCAPED_D_QUOTE/g, '"');
+      _match = _match.replace(/ESCAPED_S_QUOTE/g, "'");
+      _match = _match.replace(/ESCAPED_T/g, "\t");
+      _match = _match.replace(/ESCAPED_N/g, "\n");
+      _match = _match.replace(/ESCAPED_R/g, "\r");
+      _match = _match.replace(/ESCAPED_B/g, "\\");
 
       return _match;
     });
   }
+
+  // Convert binary strings back to proper format
+  //@ts-ignore
+  retArr = retArr.map((part) => {
+    if (part.includes("\\x")) {
+      // Handle binary data
+      return Buffer.from(
+        part.replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) =>
+          String.fromCharCode(parseInt(hex, 16))
+        ),
+        "binary"
+      );
+    }
+    return part;
+  });
 
   return retArr;
 }

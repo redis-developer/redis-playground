@@ -27,7 +27,7 @@ const importByRedisCommandsFile = async (
   const redisWrapper = new RedisWrapper(redisConUrl);
   await redisWrapper.connect();
 
-  const content = await fs.readFile(input.uploadPath, "utf8");
+  const content = await fs.readFile(input.uploadPath, "binary");
   const commands = content
     .split("\n")
     .filter((line) => line.trim() && !line.startsWith("#")); // Remove empty lines and comments
