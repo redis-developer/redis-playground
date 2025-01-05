@@ -20,13 +20,22 @@ function splitQuery(query: string) {
        output = ["FT.SEARCH", "{dbIndexName}", "@brandName:{nike} @gender:{men}"]
        */
   let retArr: string[] = [];
-  //match a sequence of characters enclosed in single quotes OR a sequence of non-space characters
-  const regex = /'[^']*'|\S+/g;
+
+  // Match either:
+  // 1. A sequence of characters between quotes (handling escaped quotes inside)
+  // 2. A sequence of non-space characters
+  const regex = /"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\S+/g;
   const matches = query.match(regex);
+
   if (matches) {
-    //Remove the surrounding single quotes from the matched elements
-    retArr = matches.map((match) => match.replace(/^'|'$/g, ""));
+    retArr = matches.map((match) => {
+      // Remove surrounding quotes if they exist
+      match = match.replace(/^['"]|['"]$/g, "");
+
+      return match;
+    });
   }
+
   return retArr;
 }
 

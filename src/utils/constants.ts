@@ -10,6 +10,7 @@ const UPLOAD_TYPES_FOR_IMPORT = {
   JSON_FOLDER: "jsonFolder",
   JSON_ARRAY_FILE: "jsonArrayFile",
   CSV_FILE: "csvFile",
+  REDIS_COMMANDS_FILE: "redisCommandsFile",
 };
 enum ImportStatus {
   IN_PROGRESS = "inProgress",

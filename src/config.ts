@@ -6,6 +6,7 @@ import { UPLOAD_TYPES_FOR_IMPORT } from "./utils/constants.js";
 enum DATA_SOURCE_ID {
   FASHION_DS = "FASHION_DS",
   USER_DS = "USER_DS",
+  BIKE_DS = "BIKE_DS",
   TEST_JSON_ARR_DS = "TEST_JSON_ARR_DS",
 }
 enum DB_INDEX_ID {
@@ -175,6 +176,14 @@ const DATA_SOURCES: IDataSource[] = [
     idField: "productId",
     keyPrefix: `${REDIS_KEYS.PREFIX.APP}jsonArrSource:`,
     jsFunctionString: "",
+  },
+  {
+    dataSourceId: DATA_SOURCE_ID.BIKE_DS,
+    uploadType: UPLOAD_TYPES_FOR_IMPORT.REDIS_COMMANDS_FILE,
+    uploadPath: "data/data-sources/bike-ds/bike-data.redis",
+    //idField: "",
+    //keyPrefix: "",
+    //jsFunctionString: "",
   },
 ];
 
