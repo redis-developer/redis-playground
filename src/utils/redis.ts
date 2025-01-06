@@ -58,7 +58,6 @@ function splitQuery(query: string) {
   //@ts-ignore
   retArr = retArr.map((part) => {
     if (part.includes("\\x")) {
-      // Handle binary data
       return Buffer.from(
         part.replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) =>
           String.fromCharCode(parseInt(hex, 16))
