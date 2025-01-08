@@ -1,3 +1,5 @@
+import type { IDataSource } from "../../config.js";
+
 import { z } from "zod";
 
 import * as InputSchemas from "../../input-schema.js";
@@ -6,7 +8,39 @@ import {
   MIN_REDIS_SAMPLE_DATA_COUNT,
   MAX_REDIS_SAMPLE_DATA_COUNT,
   DATA_SOURCES,
+  DATA_TYPES,
 } from "../../config.js";
+
+const removeVectorFieldsFromList = (list: any[], dataSource: IDataSource) => {
+  let retObjArr: any[] = [];
+
+  if (list?.length && dataSource.fields?.length) {
+    const vectorFieldNames = dataSource.fields
+      .filter((field) => field.type === DATA_TYPES.VECTOR_FIELD)
+      .map((field) => field.name);
+
+    for (let i = 0; i < list.length; i++) {
+      const obj = list[i];
+      const newObj: any = {};
+
+      for (const [key, value] of Object.entries(obj)) {
+        const isVectorField = vectorFieldNames.indexOf(key) >= 0;
+
+        if (!isVectorField) {
+          newObj[key] = value;
+        } else {
+          newObj[key] = "---VECTOR---";
+        }
+
+        retObjArr.push(newObj);
+      }
+    }
+  } else {
+    retObjArr = list;
+  }
+
+  return retObjArr;
+};
 
 const pgGetSampleDataByDataSourceId = async (
   input: z.infer<typeof InputSchemas.pgGetSampleDataByDataSourceIdSchema>
@@ -26,9 +60,21 @@ const pgGetSampleDataByDataSourceId = async (
     if (dataSource) {
       const pattern = dataSource.keyPrefix + "*";
       const keys = await redisWrapperST.getKeys(dataCount, pattern);
-      const values = await redisWrapperST.jsonMGet(keys);
+      const dataType = dataSource.dataType || DATA_TYPES.JSON;
+      let values: any;
+
+      if (dataType === DATA_TYPES.JSON) {
+        values = await redisWrapperST.jsonMGet(keys);
+      } else if (dataType === DATA_TYPES.HASH) {
+        values = await redisWrapperST.hashMGet(keys);
+      }
+
       if (values?.length) {
         retObjArr = values;
+
+        if (dataSource.fields?.length) {
+          retObjArr = removeVectorFieldsFromList(values, dataSource);
+        }
       }
     }
   }

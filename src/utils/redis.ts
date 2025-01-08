@@ -190,6 +190,19 @@ class RedisWrapper {
     return result;
   }
 
+  public async hashMGet(_keys: string[]) {
+    const result = await Promise.all(
+      _keys.map(async (key) => {
+        const retObj: any = await this.client?.hGetAll(key);
+        if (retObj) {
+          retObj["_id"] = key;
+        }
+        return retObj;
+      })
+    );
+    return result;
+  }
+
   public async rawCommandExecute(
     _command: string,
     _skipCmdCheck: boolean = false

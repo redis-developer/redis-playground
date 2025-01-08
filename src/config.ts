@@ -16,6 +16,20 @@ enum DB_INDEX_ID {
   BIKE_DS_VSS_INDEX = "BIKE_DS_VSS_INDEX",
 }
 
+enum DATA_TYPES {
+  HASH = "HASH",
+  JSON = "JSON",
+
+  VECTOR_FIELD = "VECTOR",
+  TAG_FIELD = "TAG",
+  NUMBER_FIELD = "NUMBER",
+}
+
+interface IDataSourceField {
+  name: string;
+  type: DATA_TYPES;
+}
+
 interface IDataSource {
   dataSourceId: DATA_SOURCE_ID;
   uploadType: string;
@@ -23,6 +37,8 @@ interface IDataSource {
   idField?: string;
   keyPrefix?: string;
   jsFunctionString?: string;
+  dataType?: DATA_TYPES;
+  fields?: IDataSourceField[];
 }
 
 interface IDbIndex {
@@ -142,6 +158,7 @@ const DATA_SOURCES: IDataSource[] = [
         return jsonObj; 
       }
     `,
+    dataType: DATA_TYPES.JSON,
   },
   {
     dataSourceId: DATA_SOURCE_ID.USER_DS,
@@ -171,6 +188,7 @@ const DATA_SOURCES: IDataSource[] = [
 
         return retObj; 
       }`,
+    dataType: DATA_TYPES.JSON,
   },
   {
     dataSourceId: DATA_SOURCE_ID.TEST_JSON_ARR_DS,
@@ -179,6 +197,7 @@ const DATA_SOURCES: IDataSource[] = [
     idField: "productId",
     keyPrefix: `${REDIS_KEYS.PREFIX.APP}jsonArrSource:`,
     jsFunctionString: "",
+    dataType: DATA_TYPES.JSON,
   },
   {
     dataSourceId: DATA_SOURCE_ID.BIKE_DS,
@@ -187,6 +206,13 @@ const DATA_SOURCES: IDataSource[] = [
     //idField: "",
     keyPrefix: `${REDIS_KEYS.PREFIX.APP}bike:`, //key in data source file
     //jsFunctionString: "",
+    dataType: DATA_TYPES.HASH,
+    fields: [
+      {
+        name: "description_embeddings",
+        type: DATA_TYPES.VECTOR_FIELD,
+      },
+    ],
   },
 ];
 
@@ -222,6 +248,7 @@ export {
   DATA_SOURCE_ID,
   DB_INDEXES,
   DB_INDEX_ID,
+  DATA_TYPES,
   MIN_REDIS_SAMPLE_DATA_COUNT,
   MAX_REDIS_SAMPLE_DATA_COUNT,
   getFilteredDbIndexes,
