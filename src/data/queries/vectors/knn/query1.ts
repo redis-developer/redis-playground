@@ -4,7 +4,6 @@ import {
   IQueryViewData,
 } from "../../../../config.js";
 
-// Run a vector search for 'Comfortable commuter bike'
 const queryViewData: IQueryViewData = {
   query: "",
   queryFile: "data/queries/vectors/knn/query1.redis",

@@ -4,7 +4,6 @@ import {
   IQueryViewData,
 } from "../../../../config.js";
 
-// Run a vector search for 'Female specific mountain bike' for bikes type "Mountain bikes" and with price between $3500 and $3500
 const queryViewData: IQueryViewData = {
   query: "",
   queryFile: "data/queries/vectors/hybrid/query1.redis",

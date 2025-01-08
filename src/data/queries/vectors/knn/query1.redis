@@ -1,3 +1,4 @@
+// Run a vector search for 'Comfortable commuter bike'
 FT.SEARCH {dbIndexName} 
     "*=>[KNN 3 @description_embeddings $my_blob AS score ]" 
     RETURN 4 score brand type description 

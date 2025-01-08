@@ -21,6 +21,19 @@ function splitQuery(query: string) {
        */
   let retArr: string[] = [];
 
+  //remove all empty lines and comments starting with # or //
+  query = query
+    .split("\n")
+    .filter((line) => {
+      const trimmedLine = line.trim();
+      return (
+        trimmedLine &&
+        !(trimmedLine.startsWith("#") || trimmedLine.startsWith("//"))
+      );
+    })
+    .join("\n");
+
+  // replace all escape characters with placeholders
   query = query.replace(/\\"/g, "ESCAPED_D_QUOTE");
   query = query.replace(/\\'/g, "ESCAPED_S_QUOTE");
   query = query.replace(/\\t/g, "ESCAPED_T");
