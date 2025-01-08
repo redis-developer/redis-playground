@@ -28,12 +28,13 @@ const removeVectorFieldsFromList = (list: any[], dataSource: IDataSource) => {
 
         if (!isVectorField) {
           newObj[key] = value;
-        } else {
-          newObj[key] = "---VECTOR---";
         }
-
-        retObjArr.push(newObj);
+        // else {
+        //   newObj[key] = "---VECTOR---";
+        // }
       }
+
+      retObjArr.push(newObj);
     }
   } else {
     retObjArr = list;
