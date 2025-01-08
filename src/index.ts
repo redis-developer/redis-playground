@@ -2,6 +2,10 @@ import express from "express";
 import { Server, Socket } from "socket.io";
 import http from "http";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import hpp from "hpp";
+
 import "dotenv/config";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -25,14 +29,35 @@ socketState.APP_ROOT_DIR = __dirname + "/../src/";
 //------
 
 const app = express();
-app.use(cors()); // express cors middleware
+
+// Basic security headers
+app.use(helmet());
+
+// Rate limiting - limits requests from same IP
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later",
+});
+app.use(limiter);
+
+// Prevent HTTP Parameter Pollution
+app.use(hpp());
+
+// express cors middleware
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
+    methods: ["GET", "POST"],
+  })
+); 
 
 const httpServer = http.createServer(app);
 
 //------ Socket.io
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: process.env.ALLOWED_ORIGINS?.split(",") || "*",
     methods: ["GET", "POST"],
     allowedHeaders: ["my-custom-header"],
   },

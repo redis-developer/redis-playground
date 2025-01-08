@@ -38,17 +38,18 @@ const queryNavbarData = [
       {
         queryId: "JSON_GENERAL_MULTI_FIELD_AND_CONDITION",
         label: "JSON Multi Field AND Condition",
-        description: "Search different fields using AND condition",
+        description: "Search different fields using AND condition in JSON",
       },
       {
         queryId: "JSON_GENERAL_MULTI_FIELD_OR_CONDITION",
         label: "JSON Multi Field OR Condition",
-        description: "Search different (optional) fields using OR condition",
+        description:
+          "Search different (optional) fields using OR condition in JSON",
       },
       {
         queryId: "JSON_GENERAL_NEGATIVE_CONDITION",
         label: "JSON Negative Condition",
-        description: "Search for a field that does not contain a value",
+        description: "Search for a field that does not contain a value in JSON",
       },
     ],
   },
@@ -58,24 +59,24 @@ const queryNavbarData = [
       {
         queryId: "JSON_TAG_FIELD_EXACT_MATCH",
         label: "Tag Field Exact Match",
-        description: "Search for an exact match of a tag field value",
+        description: "Search for an exact match of a tag field value in JSON",
       },
       {
         queryId: "JSON_TAG_FIELD_PREFIX_MATCH",
         label: "Tag Field Prefix Match",
-        description: "Search for a prefix match of a tag field value",
+        description: "Search for a prefix match of a tag field value in JSON",
       },
       {
         queryId: "JSON_TAG_FIELD_MULTI_VALUE_AND_MATCH",
         label: "Tag Field Multi Value AND Match",
         description:
-          "Search for multiple values of a tag field using AND condition",
+          "Search for multiple values of a tag field using AND condition in JSON",
       },
       {
         queryId: "JSON_TAG_FIELD_MULTI_VALUE_OR_MATCH",
         label: "Tag Field Multi Value OR Match",
         description:
-          "Search for multiple (optional) values of a tag field using OR condition",
+          "Search for multiple (optional) values of a tag field using OR condition in JSON",
       },
     ],
   },
