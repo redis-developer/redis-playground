@@ -34,6 +34,7 @@ interface IDbIndex {
 }
 interface IQueryViewData {
   query: string;
+  queryFile?: string;
   queryId?: string;
   dbIndexId: string;
   dataSourceId: string;
