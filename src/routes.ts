@@ -9,6 +9,8 @@ import { pgGetQueryNavbarData } from "./api/playground/pg-get-query-navbar-data.
 import { pgGetSampleDataByDataSourceId } from "./api/playground/pg-get-sample-data-by-data-source-id.js";
 import { pgGetDbIndexById } from "./api/playground/pg-get-db-index-by-id.js";
 import { pgRunQuery } from "./api/playground/pg-run-query.js";
+import { pgSaveQuery } from "./api/playground/pg-save-query.js";
+import { pgGetSavedQuery } from "./api/playground/pg-get-saved-query.js";
 
 const router = express.Router();
 
@@ -141,6 +143,44 @@ router.post("/pgRunQuery", async (req: Request, res: Response) => {
   } catch (err) {
     err = LoggerCls.getPureError(err);
     LoggerCls.error("/pgRunQuery API failed !", err);
+    result.error = err;
+    res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+  }
+
+  res.send(result);
+});
+
+router.post("/pgSaveQuery", async (req: Request, res: Response) => {
+  const result: any = {
+    data: null,
+    error: null,
+  };
+  const input = req.body;
+
+  try {
+    result.data = await pgSaveQuery(input);
+  } catch (err) {
+    err = LoggerCls.getPureError(err);
+    LoggerCls.error("/pgSaveQuery API failed !", err);
+    result.error = err;
+    res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+  }
+
+  res.send(result);
+});
+
+router.post("/pgGetSavedQuery", async (req: Request, res: Response) => {
+  const result: any = {
+    data: null,
+    error: null,
+  };
+  const input = req.body;
+
+  try {
+    result.data = await pgGetSavedQuery(input);
+  } catch (err) {
+    err = LoggerCls.getPureError(err);
+    LoggerCls.error("/pgGetSavedQuery API failed !", err);
     result.error = err;
     res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
   }

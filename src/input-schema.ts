@@ -60,6 +60,16 @@ export const pgRunQuerySchema = z.object({
   queryId: zodQueryId.optional(),
 });
 
+export const pgSaveQuerySchema = z.object({
+  title: z.string().optional(),
+  customQuery: z.string(),
+  queryId: zodQueryId.optional(),
+});
+
+export const pgGetSavedQuerySchema = z.object({
+  partialId: z.string(),
+});
+
 //--- types ---
 
 interface IImportStats {
