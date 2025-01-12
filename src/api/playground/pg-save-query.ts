@@ -14,13 +14,14 @@ const pgSaveQuery = async (
   let result: any = {};
 
   let key = REDIS_KEYS.PREFIX.APP + REDIS_KEYS.PREFIX.SAVED_QUERIES + uuidv4();
-  let expiry = 60 * 60 * 24 * 7; // 7 days
+  let expiry = 60 * 60 * 24 * 30; // 30 days
 
   let jsonVal = {
     _id: key,
     customQuery: input.customQuery,
     createdOn: new Date().toISOString(),
     title: input.title || "",
+    categoryId: input.categoryId || "",
     queryId: input.queryId || "",
   };
 

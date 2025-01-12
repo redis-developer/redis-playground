@@ -124,7 +124,7 @@ const getFilteredDataSources = (
 const REDIS_KEYS = {
   PREFIX: {
     APP: "pg:", //playground app
-    SAVED_QUERIES: "savedQueries:",
+    SAVED_QUERIES: "savedQuery:",
   },
 };
 
@@ -254,7 +254,7 @@ export {
   MAX_REDIS_SAMPLE_DATA_COUNT,
   getFilteredDbIndexes,
   getFilteredDataSources,
-  REDIS_KEYS
+  REDIS_KEYS,
 };
 
 export type { IDataSource, IDbIndex, IQueryViewData };

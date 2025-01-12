@@ -34,6 +34,7 @@ type QueryIdType = keyof typeof queryIdDataMap;
 const queryNavbarData = [
   {
     category: "JSON General",
+    categoryId: "1",
     items: [
       {
         queryId: "JSON_GENERAL_MULTI_FIELD_AND_CONDITION",
@@ -55,6 +56,7 @@ const queryNavbarData = [
   },
   {
     category: "JSON Tag Field",
+    categoryId: "2",
     items: [
       {
         queryId: "JSON_TAG_FIELD_EXACT_MATCH",
@@ -82,6 +84,7 @@ const queryNavbarData = [
   },
   {
     category: "Vectors",
+    categoryId: "3",
     items: [
       {
         queryId: "VECTORS_KNN_QUERY1",

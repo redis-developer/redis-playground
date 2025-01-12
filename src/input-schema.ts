@@ -63,6 +63,7 @@ export const pgRunQuerySchema = z.object({
 export const pgSaveQuerySchema = z.object({
   title: z.string().optional(),
   customQuery: z.string(),
+  categoryId: z.string().optional(),
   queryId: zodQueryId.optional(),
 });
 

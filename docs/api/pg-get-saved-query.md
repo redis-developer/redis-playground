@@ -18,6 +18,7 @@ POST http://localhost:3001/api/pgGetSavedQuery
     "customQuery": "FT.SEARCH 'pg:userSearchIndex' '@country:{INDIA} @gender:{F}'",
     "createdOn": "2025-01-09T10:30:14.477Z",
     "title": "User Search Query",
+    "categoryId": "001",
     "queryId": "JSON_GENERAL_MULTI_FIELD_OR_CONDITION"
   },
   "error": null
