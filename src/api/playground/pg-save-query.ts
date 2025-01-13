@@ -13,7 +13,9 @@ const pgSaveQuery = async (
   const redisWrapperST = RedisWrapperST.getInstance();
   let result: any = {};
 
-  let key = REDIS_KEYS.PREFIX.APP + REDIS_KEYS.PREFIX.SAVED_QUERIES + uuidv4();
+  const partialId = input.partialId || uuidv4();
+
+  let key = REDIS_KEYS.PREFIX.APP + REDIS_KEYS.PREFIX.SAVED_QUERIES + partialId;
   let expiry = 60 * 60 * 24 * 30; // 30 days
 
   let jsonVal = {
