@@ -121,6 +121,9 @@ const getFilteredDataSources = (
 //#endregion
 
 //#region config keys
+
+const MAX_CUSTOM_QUERY_SIZE = 1024 * 30; // 30KB
+
 const REDIS_KEYS = {
   PREFIX: {
     APP: "pg:", //playground app
@@ -255,6 +258,7 @@ export {
   getFilteredDbIndexes,
   getFilteredDataSources,
   REDIS_KEYS,
+  MAX_CUSTOM_QUERY_SIZE,
 };
 
 export type { IDataSource, IDbIndex, IQueryViewData };
