@@ -5,7 +5,8 @@ import {
 } from "../../../../config.js";
 
 const queryViewData: IQueryViewData = {
-  query: `FT.SEARCH '{dbIndexName}' '-@country:{AUSTRALIA}'`,
+  query: `//Searches for users not in Australia
+FT.SEARCH '{dbIndexName}' '-@country:{AUSTRALIA}'`,
   dbIndexId: DB_INDEX_ID.USER_DS_SEARCH_INDEX,
   dataSourceId: DATA_SOURCE_ID.USER_DS,
 };
