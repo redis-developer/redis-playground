@@ -73,6 +73,7 @@ const REDIS_ALLOWED_COMMANDS = [
   "FT.SEARCH",
   "FT._LIST",
   "FT.EXPLAIN",
+  "FT.AGGREGATE",
 
   // RedisJSON commands
   "JSON.GET",

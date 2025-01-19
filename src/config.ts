@@ -1,19 +1,22 @@
+import { UPLOAD_TYPES_FOR_IMPORT } from "./utils/constants.js";
 import { fashionSearchIndex } from "./data/db-indexes/fashion-ds/search-index.js";
 import { userSearchIndex } from "./data/db-indexes/user-ds/search-index.js";
 import { bikeVssIndex } from "./data/db-indexes/bike-ds/vss-index.js";
-import { UPLOAD_TYPES_FOR_IMPORT } from "./utils/constants.js";
+import { bicycleSearchIndex } from "./data/db-indexes/bicycle-ds/search-index.js";
 
 //#region interfaces and enums
 enum DATA_SOURCE_ID {
   FASHION_DS = "FASHION_DS",
   USER_DS = "USER_DS",
   BIKE_DS = "BIKE_DS",
+  BICYCLE_DS = "BICYCLE_DS",
   TEST_JSON_ARR_DS = "TEST_JSON_ARR_DS",
 }
 enum DB_INDEX_ID {
   FASHION_DS_SEARCH_INDEX = "FASHION_DS_SEARCH_INDEX",
   USER_DS_SEARCH_INDEX = "USER_DS_SEARCH_INDEX",
   BIKE_DS_VSS_INDEX = "BIKE_DS_VSS_INDEX",
+  BICYCLE_DS_SEARCH_INDEX = "BICYCLE_DS_SEARCH_INDEX",
 }
 
 enum DATA_TYPES {
@@ -218,6 +221,15 @@ const DATA_SOURCES: IDataSource[] = [
       },
     ],
   },
+  {
+    dataSourceId: DATA_SOURCE_ID.BICYCLE_DS,
+    uploadType: UPLOAD_TYPES_FOR_IMPORT.REDIS_COMMANDS_FILE,
+    uploadPath: "data/data-sources/bicycle-ds/bicycle-data.redis",
+    //idField: "",
+    keyPrefix: `${REDIS_KEYS.PREFIX.APP}bicycle:`, //key in data source file
+    //jsFunctionString: "",
+    dataType: DATA_TYPES.JSON,
+  },
 ];
 
 const DB_INDEXES_RAW: IDbIndex[] = [
@@ -238,6 +250,12 @@ const DB_INDEXES_RAW: IDbIndex[] = [
     dbIndexName: `${REDIS_KEYS.PREFIX.APP}bikeVssIndex`,
     dbIndexQuery: bikeVssIndex,
     dataSourceId: DATA_SOURCE_ID.BIKE_DS,
+  },
+  {
+    dbIndexId: DB_INDEX_ID.BICYCLE_DS_SEARCH_INDEX,
+    dbIndexName: `${REDIS_KEYS.PREFIX.APP}bicycleSearchIndex`,
+    dbIndexQuery: bicycleSearchIndex,
+    dataSourceId: DATA_SOURCE_ID.BICYCLE_DS,
   },
 ];
 const DB_INDEXES = getDbIndexes();

@@ -5,15 +5,19 @@ import { socketState } from "../../state.js";
 import * as JSON_GENERAL_MULTI_FIELD_AND_CONDITION from "./json/general/multi-field-and-condition.js";
 import * as JSON_GENERAL_MULTI_FIELD_OR_CONDITION from "./json/general/multi-field-or-condition.js";
 import * as JSON_GENERAL_NEGATIVE_CONDITION from "./json/general/negative-condition.js";
+
 import * as JSON_TAG_FIELD_EXACT_MATCH from "./json/tag-field/exact-match.js";
 import * as JSON_TAG_FIELD_PREFIX_MATCH from "./json/tag-field/prefix-match.js";
 import * as JSON_TAG_FIELD_MULTI_VALUE_AND_MATCH from "./json/tag-field/multi-value-and-match.js";
 import * as JSON_TAG_FIELD_MULTI_VALUE_OR_MATCH from "./json/tag-field/multi-value-or-match.js";
 
+import * as JSON_AGGREGATE_SIMPLE_MAPPING from "./json/aggregate/simple-mapping.js";
+
 import * as VECTORS_KNN_QUERY1 from "./vectors/knn/query1.js";
 import * as VECTORS_KNN_QUERY2 from "./vectors/knn/query2.js";
 import * as VECTORS_KNN_QUERY3 from "./vectors/knn/query3.js";
 import * as VECTORS_HYBRID_QUERY1 from "./vectors/hybrid/query1.js";
+
 import { getFilteredDbIndexes } from "../../config.js";
 
 const queryIdDataMap = {
@@ -24,6 +28,7 @@ const queryIdDataMap = {
   JSON_TAG_FIELD_PREFIX_MATCH,
   JSON_TAG_FIELD_MULTI_VALUE_AND_MATCH,
   JSON_TAG_FIELD_MULTI_VALUE_OR_MATCH,
+  JSON_AGGREGATE_SIMPLE_MAPPING,
   VECTORS_KNN_QUERY1,
   VECTORS_KNN_QUERY2,
   VECTORS_KNN_QUERY3,
@@ -34,7 +39,7 @@ type QueryIdType = keyof typeof queryIdDataMap;
 const queryNavbarData = [
   {
     category: "JSON General",
-    categoryId: "1",
+    categoryId: "JSON_GENERAL",
     items: [
       {
         queryId: "JSON_GENERAL_MULTI_FIELD_AND_CONDITION",
@@ -56,7 +61,7 @@ const queryNavbarData = [
   },
   {
     category: "JSON Tag Field",
-    categoryId: "2",
+    categoryId: "JSON_TAG_FIELD",
     items: [
       {
         queryId: "JSON_TAG_FIELD_EXACT_MATCH",
@@ -83,8 +88,20 @@ const queryNavbarData = [
     ],
   },
   {
+    category: "JSON Aggregate",
+    categoryId: "JSON_AGGREGATE",
+    items: [
+      {
+        queryId: "JSON_AGGREGATE_SIMPLE_MAPPING",
+        label: "Simple Mapping",
+        description:
+          "A simple mapping function on the field values using APPLY clause",
+      },
+    ],
+  },
+  {
     category: "Vectors",
-    categoryId: "3",
+    categoryId: "VECTORS",
     items: [
       {
         queryId: "VECTORS_KNN_QUERY1",
