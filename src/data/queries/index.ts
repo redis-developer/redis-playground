@@ -12,6 +12,9 @@ import * as JSON_TAG_FIELD_MULTI_VALUE_AND_MATCH from "./json/tag-field/multi-va
 import * as JSON_TAG_FIELD_MULTI_VALUE_OR_MATCH from "./json/tag-field/multi-value-or-match.js";
 
 import * as JSON_AGGREGATE_SIMPLE_MAPPING from "./json/aggregate/simple-mapping.js";
+import * as JSON_AGGREGATE_GROUPBY_REDUCE_SUM from "./json/aggregate/groupby-reduce-sum.js";
+import * as JSON_AGGREGATE_GROUPBY_REDUCE_COUNT from "./json/aggregate/groupby-reduce-count.js";
+import * as JSON_AGGREGATE_GROUPBY_REDUCE_TOLIST from "./json/aggregate/groupby-reduce-tolist.js";
 
 import * as VECTORS_KNN_QUERY1 from "./vectors/knn/query1.js";
 import * as VECTORS_KNN_QUERY2 from "./vectors/knn/query2.js";
@@ -29,6 +32,9 @@ const queryIdDataMap = {
   JSON_TAG_FIELD_MULTI_VALUE_AND_MATCH,
   JSON_TAG_FIELD_MULTI_VALUE_OR_MATCH,
   JSON_AGGREGATE_SIMPLE_MAPPING,
+  JSON_AGGREGATE_GROUPBY_REDUCE_SUM,
+  JSON_AGGREGATE_GROUPBY_REDUCE_COUNT,
+  JSON_AGGREGATE_GROUPBY_REDUCE_TOLIST,
   VECTORS_KNN_QUERY1,
   VECTORS_KNN_QUERY2,
   VECTORS_KNN_QUERY3,
@@ -93,9 +99,26 @@ const queryNavbarData = [
     items: [
       {
         queryId: "JSON_AGGREGATE_SIMPLE_MAPPING",
-        label: "Simple Mapping",
+        label: "New field using APPLY",
+        description: "Creating a new field using APPLY",
+      },
+      {
+        queryId: "JSON_AGGREGATE_GROUPBY_REDUCE_SUM",
+        label: "Group By Reduce Sum",
         description:
-          "A simple mapping function on the field values using APPLY clause",
+          "Group by a field and reduce the values using SUM function",
+      },
+      {
+        queryId: "JSON_AGGREGATE_GROUPBY_REDUCE_COUNT",
+        label: "Group By Reduce Count",
+        description:
+          "Group by a field and reduce the values using COUNT function",
+      },
+      {
+        queryId: "JSON_AGGREGATE_GROUPBY_REDUCE_TOLIST",
+        label: "Group By Reduce To List",
+        description:
+          "Group by a field and reduce the values using TOLIST function",
       },
     ],
   },
