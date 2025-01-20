@@ -16,6 +16,11 @@ import * as JSON_AGGREGATE_GROUPBY_REDUCE_SUM from "./json/aggregate/groupby-red
 import * as JSON_AGGREGATE_GROUPBY_REDUCE_COUNT from "./json/aggregate/groupby-reduce-count.js";
 import * as JSON_AGGREGATE_GROUPBY_REDUCE_TOLIST from "./json/aggregate/groupby-reduce-tolist.js";
 
+import * as JSON_FULL_TEXT_ALL_TEXT_FIELDS from "./json/full-text/all-text-fields.js";
+import * as JSON_FULL_TEXT_SPECIFIC_TEXT_FIELD from "./json/full-text/specific-text-field.js";
+import * as JSON_FULL_TEXT_WILDCARD_SEARCH from "./json/full-text/wildcard-search.js";
+import * as JSON_FULL_TEXT_FUZZY_SEARCH from "./json/full-text/fuzzy-search.js";
+
 import * as VECTORS_KNN_QUERY1 from "./vectors/knn/query1.js";
 import * as VECTORS_KNN_QUERY2 from "./vectors/knn/query2.js";
 import * as VECTORS_KNN_QUERY3 from "./vectors/knn/query3.js";
@@ -35,6 +40,10 @@ const queryIdDataMap = {
   JSON_AGGREGATE_GROUPBY_REDUCE_SUM,
   JSON_AGGREGATE_GROUPBY_REDUCE_COUNT,
   JSON_AGGREGATE_GROUPBY_REDUCE_TOLIST,
+  JSON_FULL_TEXT_ALL_TEXT_FIELDS,
+  JSON_FULL_TEXT_SPECIFIC_TEXT_FIELD,
+  JSON_FULL_TEXT_WILDCARD_SEARCH,
+  JSON_FULL_TEXT_FUZZY_SEARCH,
   VECTORS_KNN_QUERY1,
   VECTORS_KNN_QUERY2,
   VECTORS_KNN_QUERY3,
@@ -94,7 +103,34 @@ const queryNavbarData = [
     ],
   },
   {
-    category: "JSON Aggregate",
+    category: "Full Text",
+    categoryId: "FULL_TEXT",
+    items: [
+      {
+        queryId: "JSON_FULL_TEXT_ALL_TEXT_FIELDS",
+        label: "All Text Fields",
+        description:
+          "To search for a word (or word stem) across all text fields",
+      },
+      {
+        queryId: "JSON_FULL_TEXT_SPECIFIC_TEXT_FIELD",
+        label: "Specific Text Field",
+        description: "To search for a word in a specific text field",
+      },
+      {
+        queryId: "JSON_FULL_TEXT_WILDCARD_SEARCH",
+        label: "Wildcard Search",
+        description: "To search for a word pattern in a text field",
+      },
+      {
+        queryId: "JSON_FULL_TEXT_FUZZY_SEARCH",
+        label: "Fuzzy Search",
+        description: "To search for a word with spelling variations",
+      },
+    ],
+  },
+  {
+    category: "Aggregate",
     categoryId: "JSON_AGGREGATE",
     items: [
       {
