@@ -5,6 +5,7 @@ import { socketState } from "../../state.js";
 import * as JSON_GENERAL_MULTI_FIELD_AND_CONDITION from "./json/general/multi-field-and-condition.js";
 import * as JSON_GENERAL_MULTI_FIELD_OR_CONDITION from "./json/general/multi-field-or-condition.js";
 import * as JSON_GENERAL_NEGATIVE_CONDITION from "./json/general/negative-condition.js";
+import * as JSON_GENERAL_NUMERIC_RANGE from "./json/general/numeric-range.js";
 
 import * as JSON_TAG_FIELD_EXACT_MATCH from "./json/tag-field/exact-match.js";
 import * as JSON_TAG_FIELD_PREFIX_MATCH from "./json/tag-field/prefix-match.js";
@@ -32,6 +33,7 @@ const queryIdDataMap = {
   JSON_GENERAL_MULTI_FIELD_AND_CONDITION,
   JSON_GENERAL_MULTI_FIELD_OR_CONDITION,
   JSON_GENERAL_NEGATIVE_CONDITION,
+  JSON_GENERAL_NUMERIC_RANGE,
   JSON_TAG_FIELD_EXACT_MATCH,
   JSON_TAG_FIELD_PREFIX_MATCH,
   JSON_TAG_FIELD_MULTI_VALUE_AND_MATCH,
@@ -58,19 +60,23 @@ const queryNavbarData = [
     items: [
       {
         queryId: "JSON_GENERAL_MULTI_FIELD_AND_CONDITION",
-        label: "JSON Multi Field AND Condition",
-        description: "Search different fields using AND condition in JSON",
+        label: "Multi Field AND Condition",
+        description: "Search different fields using AND condition",
       },
       {
         queryId: "JSON_GENERAL_MULTI_FIELD_OR_CONDITION",
-        label: "JSON Multi Field OR Condition",
-        description:
-          "Search different (optional) fields using OR condition in JSON",
+        label: "Multi Field OR Condition",
+        description: "Search different (optional) fields using OR condition",
       },
       {
         queryId: "JSON_GENERAL_NEGATIVE_CONDITION",
-        label: "JSON Negative Condition",
-        description: "Search for a field that does not contain a value in JSON",
+        label: "Negative Condition",
+        description: "Search for a field that does not contain a value",
+      },
+      {
+        queryId: "JSON_GENERAL_NUMERIC_RANGE",
+        label: "Numeric Range",
+        description: "Search for a numeric field within a range",
       },
     ],
   },
@@ -81,30 +87,30 @@ const queryNavbarData = [
       {
         queryId: "JSON_TAG_FIELD_EXACT_MATCH",
         label: "Tag Field Exact Match",
-        description: "Search for an exact match of a tag field value in JSON",
+        description: "Search for an exact match of a tag field value",
       },
       {
         queryId: "JSON_TAG_FIELD_PREFIX_MATCH",
         label: "Tag Field Prefix Match",
-        description: "Search for a prefix match of a tag field value in JSON",
+        description: "Search for a prefix match of a tag field value",
       },
       {
         queryId: "JSON_TAG_FIELD_MULTI_VALUE_AND_MATCH",
         label: "Tag Field Multi Value AND Match",
         description:
-          "Search for multiple values of a tag field using AND condition in JSON",
+          "Search for multiple values of a tag field using AND condition",
       },
       {
         queryId: "JSON_TAG_FIELD_MULTI_VALUE_OR_MATCH",
         label: "Tag Field Multi Value OR Match",
         description:
-          "Search for multiple (optional) values of a tag field using OR condition in JSON",
+          "Search for multiple (optional) values of a tag field using OR condition",
       },
     ],
   },
   {
-    category: "Full Text",
-    categoryId: "FULL_TEXT",
+    category: "JSON Full Text",
+    categoryId: "JSON_FULL_TEXT",
     items: [
       {
         queryId: "JSON_FULL_TEXT_ALL_TEXT_FIELDS",
@@ -130,7 +136,7 @@ const queryNavbarData = [
     ],
   },
   {
-    category: "Aggregate",
+    category: "JSON Aggregate",
     categoryId: "JSON_AGGREGATE",
     items: [
       {
