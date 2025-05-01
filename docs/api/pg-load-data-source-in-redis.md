@@ -6,7 +6,8 @@
 POST http://localhost:3001/api/pgLoadDataSourceInRedis
 {
   "isAll":true,
-  //"dataSourceIds":["FASHION_DS"]
+  //"dataSourceIds":["FASHION_DS"],
+  "globalPrefix":"pgWritable:"
 }
 ```
 

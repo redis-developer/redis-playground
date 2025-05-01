@@ -32,12 +32,14 @@ const importByRedisCommandsFile = async (
     .split("\n")
     .filter((line) => line.trim() && !line.startsWith("#")); // Remove empty lines and comments
 
+  let keyPrefix = input.keyPrefix || "";
   if (commands.length > 0 && importState?.stats && importState.importErrors) {
     importState.stats.totalFiles = commands.length;
 
     for (let i = 0; i < commands.length; i++) {
-      const cmd = commands[i];
+      let cmd = commands[i];
       try {
+        cmd = cmd.replace("{keyPrefix}", keyPrefix);
         await redisWrapper.rawCommandExecute(cmd, true);
 
         importState.stats.processed++;

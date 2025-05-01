@@ -6,7 +6,8 @@
 POST http://localhost:3001/api/pgCreateIndexInRedis
 {
   "isAll":false,
-  "dbIndexIds":["FASHION_DS_SEARCH_INDEX"]
+  "dbIndexIds":["FASHION_DS_SEARCH_INDEX"],
+  "globalPrefix":"pgWritable:"
 }
 ```
 

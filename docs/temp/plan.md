@@ -19,9 +19,9 @@
 export const queryViewData = {
   queryId: "EXACT_MATCH_NUMERIC_QUERY",
   defaultQuery: `FT.SEARCH idx:bicycle "@price:[270 270]"`,
-  defaultQueryResult: "",
-  indexId: "", // one from indexes folder
-  dataSourceId: "", // one from data-sources folder
+  //defaultQueryResult: "",
+  indexId: "", // to get view data
+  dataSourceId: "", // to get view data
 };
 ```
 
@@ -32,20 +32,26 @@ Note :
 
 ### APIs
 
-- `GET /api/getDataSourceById` -> (Also cache in frontend to prevent extra calls)
-- `GET /api/getIndexById` -> (Also cache)
-- `GET /api/getQueryById` -> (Also cache)
+- `GET /api/getQueryNavbarData` -> (done)
+- `GET /api/getQueryDataById` -> (done)
+- `GET /api/getSampleDataByDataSourceId` ->(done)(Also cache in frontend to prevent extra calls)
+- `GET /api/getDbIndexById` ->(done) (Also cache)
 
-- `POST /api/runQuery` : (If query is same as default query, then use default query result to prevent API call)
+- `POST /api/runQuery` : (done)
+
+  - (If query is same as default query, then use default query result to prevent API call)
+  - Safe guards to prevent dangerous queries (Eg: `DEL *`)
 
   ```json
   {
     "customQuery": "",
-    "queryId": "EXACT_MATCH_NUMERIC_QUERY",
-    "indexId": "",
-    "dataSourceId": ""
+    "queryId": "EXACT_MATCH_NUMERIC_QUERY"
+    //"indexId": "",
+    //"dataSourceId": ""
   }
   ```
+
+  Note: show result from db only, as they may have changed data manually
 
 - `POST /api/saveQuery` : For sharing functionality
 

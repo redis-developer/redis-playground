@@ -46,7 +46,8 @@ const pgLoadDataSourceInRedis = async (
 
   let filteredDataSources = getFilteredDataSources(
     input.dataSourceIds,
-    input.isAll
+    input.isAll,
+    input.globalPrefix
   );
 
   if (filteredDataSources.length > 0) {

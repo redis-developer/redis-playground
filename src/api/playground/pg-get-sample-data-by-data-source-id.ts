@@ -7,8 +7,8 @@ import { RedisWrapperST } from "../../utils/redis.js";
 import {
   MIN_REDIS_SAMPLE_DATA_COUNT,
   MAX_REDIS_SAMPLE_DATA_COUNT,
-  DATA_SOURCES,
   DATA_TYPES,
+  getFilteredDataSources,
 } from "../../config.js";
 
 const removeVectorFieldsFromList = (list: any[], dataSource: IDataSource) => {
@@ -55,9 +55,14 @@ const pgGetSampleDataByDataSourceId = async (
     dataCount = MAX_REDIS_SAMPLE_DATA_COUNT;
   }
   if (input.dataSourceId) {
-    const dataSource = DATA_SOURCES.find(
-      (ds) => ds.dataSourceId === input.dataSourceId
+    let filteredDataSources = getFilteredDataSources(
+      [input.dataSourceId],
+      false
     );
+
+    const dataSource =
+      filteredDataSources.length > 0 ? filteredDataSources[0] : null;
+
     if (dataSource) {
       const pattern = dataSource.keyPrefix + "*";
       const keys = await redisWrapperST.getKeys(dataCount, pattern);

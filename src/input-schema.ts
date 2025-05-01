@@ -34,11 +34,13 @@ export const resumeImportDataToRedisSchema = z.object({
 export const pgLoadDataSourceInRedisSchema = z.object({
   dataSourceIds: z.array(z.nativeEnum(DATA_SOURCE_ID)),
   isAll: z.boolean().optional(),
+  globalPrefix: z.string().optional(),
 });
 
 export const pgCreateIndexInRedisSchema = z.object({
   dbIndexIds: z.array(z.nativeEnum(DB_INDEX_ID)),
   isAll: z.boolean().optional(),
+  globalPrefix: z.string().optional(),
 });
 
 export const pgGetQueryDataByIdSchema = z.object({

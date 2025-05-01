@@ -32,7 +32,11 @@ const pgCreateIndexInRedis = async (
   InputSchemas.pgCreateIndexInRedisSchema.parse(input); // validate input
 
   let retObjArr: any[] = [];
-  let filteredDbIndexes = getFilteredDbIndexes(input.dbIndexIds, input.isAll);
+  let filteredDbIndexes = getFilteredDbIndexes(
+    input.dbIndexIds,
+    input.isAll,
+    input.globalPrefix
+  );
 
   if (filteredDbIndexes.length > 0) {
     for (const dbIndex of filteredDbIndexes) {

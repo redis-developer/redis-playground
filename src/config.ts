@@ -49,7 +49,7 @@ interface IDbIndex {
   dbIndexName: string;
   dbIndexQuery: string;
   dataSourceId: DATA_SOURCE_ID;
-  keyPrefix?: string;
+  keyPrefix: string;
 }
 interface IQueryViewData {
   query: string;
@@ -68,6 +68,7 @@ const getKeyPrefix = (dataSourceId: DATA_SOURCE_ID) => {
   return dataSource?.keyPrefix || "";
 };
 
+/*
 const getDbIndexes = () => {
   let retObj = DB_INDEXES_RAW;
 
@@ -84,23 +85,42 @@ const getDbIndexes = () => {
 
   return retObj;
 };
+ */
 
 const getFilteredDbIndexes = (
   dbIndexIds: DB_INDEX_ID[],
-  isAll: boolean = false
+  isAll: boolean = false,
+  globalPrefix: string = ""
 ) => {
   let filteredDbIndexes: IDbIndex[] = [];
 
   if (!dbIndexIds) {
     dbIndexIds = [];
   }
+  globalPrefix = globalPrefix || "";
 
   if (isAll) {
-    filteredDbIndexes = DB_INDEXES;
+    filteredDbIndexes = DB_INDEXES_RAW;
   } else if (dbIndexIds.length > 0) {
-    filteredDbIndexes = DB_INDEXES.filter((di) =>
+    filteredDbIndexes = DB_INDEXES_RAW.filter((di) =>
       dbIndexIds.includes(di.dbIndexId)
     );
+  }
+
+  if (filteredDbIndexes?.length > 0) {
+    filteredDbIndexes = filteredDbIndexes.map((dbIndex) => {
+      if (globalPrefix) {
+        dbIndex.dbIndexName = globalPrefix + dbIndex.dbIndexName;
+        dbIndex.keyPrefix = globalPrefix + dbIndex.keyPrefix;
+      }
+
+      let dbIndexQuery = dbIndex.dbIndexQuery;
+      dbIndexQuery = dbIndexQuery.replace("{dbIndexName}", dbIndex.dbIndexName);
+      dbIndexQuery = dbIndexQuery.replace("{keyPrefix}", dbIndex.keyPrefix);
+      dbIndex.dbIndexQuery = dbIndexQuery;
+
+      return dbIndex;
+    });
   }
 
   return filteredDbIndexes;
@@ -108,15 +128,24 @@ const getFilteredDbIndexes = (
 
 const getFilteredDataSources = (
   dataSourceIds: DATA_SOURCE_ID[],
-  isAll: boolean = false
+  isAll: boolean = false,
+  globalPrefix: string = ""
 ) => {
   let filteredDataSources: IDataSource[] = [];
+  globalPrefix = globalPrefix || "";
   if (isAll) {
     filteredDataSources = DATA_SOURCES;
   } else if (dataSourceIds?.length > 0) {
     filteredDataSources = DATA_SOURCES.filter((ds) =>
       dataSourceIds.includes(ds.dataSourceId)
     );
+  }
+
+  if (globalPrefix && filteredDataSources?.length > 0) {
+    filteredDataSources = filteredDataSources.map((ds) => {
+      ds.keyPrefix = globalPrefix + ds.keyPrefix;
+      return ds;
+    });
   }
   return filteredDataSources;
 };
@@ -211,7 +240,7 @@ const DATA_SOURCES: IDataSource[] = [
     uploadType: UPLOAD_TYPES_FOR_IMPORT.REDIS_COMMANDS_FILE,
     uploadPath: "data/data-sources/bike-ds/bike-data.redis",
     //idField: "",
-    keyPrefix: `${REDIS_KEYS.PREFIX.APP}bike:`, //key in data source file
+    keyPrefix: `${REDIS_KEYS.PREFIX.APP}bike:`,
     //jsFunctionString: "",
     dataType: DATA_TYPES.HASH,
     fields: [
@@ -226,7 +255,7 @@ const DATA_SOURCES: IDataSource[] = [
     uploadType: UPLOAD_TYPES_FOR_IMPORT.REDIS_COMMANDS_FILE,
     uploadPath: "data/data-sources/bicycle-ds/bicycle-data.redis",
     //idField: "",
-    keyPrefix: `${REDIS_KEYS.PREFIX.APP}bicycle:`, //key in data source file
+    keyPrefix: `${REDIS_KEYS.PREFIX.APP}bicycle:`,
     //jsFunctionString: "",
     dataType: DATA_TYPES.JSON,
   },
@@ -238,27 +267,31 @@ const DB_INDEXES_RAW: IDbIndex[] = [
     dbIndexName: `${REDIS_KEYS.PREFIX.APP}fashionSearchIndex`,
     dbIndexQuery: fashionSearchIndex,
     dataSourceId: DATA_SOURCE_ID.FASHION_DS,
+    keyPrefix: getKeyPrefix(DATA_SOURCE_ID.FASHION_DS),
   },
   {
     dbIndexId: DB_INDEX_ID.USER_DS_SEARCH_INDEX,
     dbIndexName: `${REDIS_KEYS.PREFIX.APP}userSearchIndex`,
     dbIndexQuery: userSearchIndex,
     dataSourceId: DATA_SOURCE_ID.USER_DS,
+    keyPrefix: getKeyPrefix(DATA_SOURCE_ID.USER_DS),
   },
   {
     dbIndexId: DB_INDEX_ID.BIKE_DS_VSS_INDEX,
     dbIndexName: `${REDIS_KEYS.PREFIX.APP}bikeVssIndex`,
     dbIndexQuery: bikeVssIndex,
     dataSourceId: DATA_SOURCE_ID.BIKE_DS,
+    keyPrefix: getKeyPrefix(DATA_SOURCE_ID.BIKE_DS),
   },
   {
     dbIndexId: DB_INDEX_ID.BICYCLE_DS_SEARCH_INDEX,
     dbIndexName: `${REDIS_KEYS.PREFIX.APP}bicycleSearchIndex`,
     dbIndexQuery: bicycleSearchIndex,
     dataSourceId: DATA_SOURCE_ID.BICYCLE_DS,
+    keyPrefix: getKeyPrefix(DATA_SOURCE_ID.BICYCLE_DS),
   },
 ];
-const DB_INDEXES = getDbIndexes();
+//const DB_INDEXES = getDbIndexes();
 
 const MIN_REDIS_SAMPLE_DATA_COUNT = 1;
 const MAX_REDIS_SAMPLE_DATA_COUNT = 1000;
@@ -266,9 +299,9 @@ const MAX_REDIS_SAMPLE_DATA_COUNT = 1000;
 //#endregion
 
 export {
-  DATA_SOURCES,
+  // DATA_SOURCES,
   DATA_SOURCE_ID,
-  DB_INDEXES,
+  //DB_INDEXES,
   DB_INDEX_ID,
   DATA_TYPES,
   MIN_REDIS_SAMPLE_DATA_COUNT,
