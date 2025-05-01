@@ -109,17 +109,21 @@ const getFilteredDbIndexes = (
 
   if (filteredDbIndexes?.length > 0) {
     filteredDbIndexes = filteredDbIndexes.map((dbIndex) => {
+      const newDbIndex = { ...dbIndex };
       if (globalPrefix) {
-        dbIndex.dbIndexName = globalPrefix + dbIndex.dbIndexName;
-        dbIndex.keyPrefix = globalPrefix + dbIndex.keyPrefix;
+        newDbIndex.dbIndexName = globalPrefix + dbIndex.dbIndexName;
+        newDbIndex.keyPrefix = globalPrefix + dbIndex.keyPrefix;
       }
 
       let dbIndexQuery = dbIndex.dbIndexQuery;
-      dbIndexQuery = dbIndexQuery.replace("{dbIndexName}", dbIndex.dbIndexName);
-      dbIndexQuery = dbIndexQuery.replace("{keyPrefix}", dbIndex.keyPrefix);
-      dbIndex.dbIndexQuery = dbIndexQuery;
+      dbIndexQuery = dbIndexQuery.replace(
+        "{dbIndexName}",
+        newDbIndex.dbIndexName
+      );
+      dbIndexQuery = dbIndexQuery.replace("{keyPrefix}", newDbIndex.keyPrefix);
+      newDbIndex.dbIndexQuery = dbIndexQuery;
 
-      return dbIndex;
+      return newDbIndex;
     });
   }
 
@@ -143,8 +147,9 @@ const getFilteredDataSources = (
 
   if (globalPrefix && filteredDataSources?.length > 0) {
     filteredDataSources = filteredDataSources.map((ds) => {
-      ds.keyPrefix = globalPrefix + ds.keyPrefix;
-      return ds;
+      const newDs = { ...ds };
+      newDs.keyPrefix = globalPrefix + ds.keyPrefix;
+      return newDs;
     });
   }
   return filteredDataSources;
@@ -159,6 +164,8 @@ const MAX_CUSTOM_QUERY_SIZE = 1024 * 30; // 30KB
 const REDIS_KEYS = {
   PREFIX: {
     APP: "pg:", //playground app
+    WRITABLE_APP: "pgWritable:", //playground writable user data app
+    USER_DATA: "pgUser:",
     SAVED_QUERIES: "savedQuery:",
   },
 };

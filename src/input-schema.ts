@@ -43,6 +43,13 @@ export const pgCreateIndexInRedisSchema = z.object({
   globalPrefix: z.string().optional(),
 });
 
+export const pgGenerateNewUserDataSchema = z.object({
+  userId: z.string().optional(),
+  isAll: z.boolean().optional(),
+  dbIndexIds: z.array(z.nativeEnum(DB_INDEX_ID)).optional(),
+  dataSourceIds: z.array(z.nativeEnum(DATA_SOURCE_ID)).optional(),
+});
+
 export const pgGetQueryDataByIdSchema = z.object({
   queryIds: z.array(zodQueryId),
 });

@@ -40,17 +40,17 @@
 
 ## APIs
 
-- `POST /api/generateNewUserWithData` : Create a new userId, copy all the existing db data & indexes from `pg:` prefix to `pgWritable:users:XXX:pg:` prefix
+- `POST /api/generateNewUserData` : Create a new userId, copy all the existing db data & indexes from `pg:` prefix to `pgWritable:user:XXX:pg:` prefix
 
 - `POST /api/getNewUserId` :
 
-  - get UNUSED userId from `pgWritable:users:` (check status) + `generateNewUserWithData` in async for extra UNUSED data + `updateExpiryForUserData`
-  - else `generateNewUserWithData` in SYNC + `updateExpiryForUserData`
+  - get UNUSED userId from `pgWritable:users:` (check status) + `generateNewUserData` in async for extra UNUSED data + `updateExpiryForUserData`
+  - else `generateNewUserData` in SYNC + `updateExpiryForUserData`
 
 ### Internal methods
 
-- `updateExpiryForUserData` : update TTL for `pgWritable:users:XXX` data
-- update `pgRunQuery()` to add proper `pgWritable:users:XXX` key prefix for all queries (if userId is passed in API request)
+- `updateExpiryForUserData` : update TTL for `pgWritable:user:XXX` data
+- update `pgRunQuery()` to add proper `pgWritable:user:XXX` key prefix for all queries (if userId is passed in API request)
 - update constants to allow specific write commands only
 - update share query functionality : they can share new user queries with others via share link (but now userId (u) in queryParams exists for shared URL)
 

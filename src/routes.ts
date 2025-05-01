@@ -11,6 +11,7 @@ import { pgGetDbIndexById } from "./api/playground/pg-get-db-index-by-id.js";
 import { pgRunQuery } from "./api/playground/pg-run-query.js";
 import { pgSaveQuery } from "./api/playground/pg-save-query.js";
 import { pgGetSavedQuery } from "./api/playground/pg-get-saved-query.js";
+import { pgGenerateNewUserData } from "./api/playground/pg-generate-new-user-data.js";
 
 const router = express.Router();
 
@@ -181,6 +182,25 @@ router.post("/pgGetSavedQuery", async (req: Request, res: Response) => {
   } catch (err) {
     err = LoggerCls.getPureError(err);
     LoggerCls.error("/pgGetSavedQuery API failed !", err);
+    result.error = err;
+    res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
+  }
+
+  res.send(result);
+});
+
+router.post("/pgGenerateNewUserData", async (req: Request, res: Response) => {
+  const result: any = {
+    data: null,
+    error: null,
+  };
+  const input = req.body;
+
+  try {
+    result.data = await pgGenerateNewUserData(input);
+  } catch (err) {
+    err = LoggerCls.getPureError(err);
+    LoggerCls.error("/pgGenerateNewUserData API failed !", err);
     result.error = err;
     res.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR);
   }
