@@ -33,7 +33,7 @@
   - `pgWritable:users:XXX:status` -
     ```json
     {
-      "userStatus": "ACTIVE", //UNUSED,ACTIVE, INACTIVE, TO_BE_DELETED
+      "userDataStatus": "ACTIVE", //UNUSED,ACTIVE, INACTIVE, TO_BE_DELETED
       "lastAccessedDateTime": "2021-01-01 12:00:00" //have ISO 8601 format
     }
     ```
@@ -44,11 +44,12 @@
 
 - `POST /api/getNewUserId` :
 
-  - get UNUSED userId from `pgWritable:users:` (check status) + `generateNewUserData` in async for extra UNUSED data + `updateExpiryForUserData`
+  - get UNUSED userId from `pgWritable:users:` (check and update status immediately after access) + `generateNewUserData` in async for extra UNUSED data + `updateExpiryForUserData`
   - else `generateNewUserData` in SYNC + `updateExpiryForUserData`
 
 ### Internal methods
 
+- `addUserStatus` : add user status to `pgWritable:users:XXX`
 - `updateExpiryForUserData` : update TTL for `pgWritable:user:XXX` data
 - update `pgRunQuery()` to add proper `pgWritable:user:XXX` key prefix for all queries (if userId is passed in API request)
 - update constants to allow specific write commands only
@@ -56,10 +57,10 @@
 
 ### Note
 
-- Check expiry settings with cody for shared custom query
+- Check expiry settings with cody for shared custom query (through flag delete/ non-delete)
 - Change the redis key prefix of shared custom query
-- reduce fashion ds from 10k products to 1k products
-- Have a architecture doc for this project which CEO and other tech team can understand
+- reduce fashion ds from 10k products to 1k products (min data in each dataset)
+- Have a architecture doc for this project which other tech team can understand
 
 ## UI
 

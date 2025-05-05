@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { UPLOAD_TYPES_FOR_IMPORT } from "./utils/constants.js";
 import { fashionSearchIndex } from "./data/db-indexes/fashion-ds/search-index.js";
 import { userSearchIndex } from "./data/db-indexes/user-ds/search-index.js";
@@ -161,12 +163,27 @@ const getFilteredDataSources = (
 
 const MAX_CUSTOM_QUERY_SIZE = 1024 * 30; // 30KB
 
+const expiryHours = parseInt(process.env.USER_DATA_EXPIRY_IN_HOURS || "720");
+const slideExpiryPercent = parseInt(
+  process.env.SLIDE_EXPIRY_IN_PERCENT || "50"
+);
+
 const REDIS_KEYS = {
   PREFIX: {
     APP: "pg:", //playground app
     WRITABLE_APP: "pgWritable:", //playground writable user data app
     USER_DATA: "pgUser:",
     SAVED_QUERIES: "savedQuery:",
+  },
+  LABELS: {
+    EXPIRY_TIMESTAMP: "EXPIRY_TIMESTAMP",
+    EXTEND_EXPIRY_IF_ACCESSED_AFTER: "EXTEND_EXPIRY_IF_ACCESSED_AFTER",
+    USER_INFO: "info",
+    USER_INFO_DATA_STATUS: "userDataStatus",
+  },
+  EXPIRY: {
+    USER_DATA_EXPIRY_IN_HOURS: expiryHours,
+    SLIDE_EXPIRY_IN_PERCENT: slideExpiryPercent,
   },
 };
 

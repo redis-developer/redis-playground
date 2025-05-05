@@ -11,7 +11,7 @@ import { pgGetDbIndexById } from "./api/playground/pg-get-db-index-by-id.js";
 import { pgRunQuery } from "./api/playground/pg-run-query.js";
 import { pgSaveQuery } from "./api/playground/pg-save-query.js";
 import { pgGetSavedQuery } from "./api/playground/pg-get-saved-query.js";
-import { pgGenerateNewUserData } from "./api/playground/pg-generate-new-user-data.js";
+import { pgGenerateNewUserData } from "./api/playground/new-user-data/pg-generate-new-user-data.js";
 
 const router = express.Router();
 

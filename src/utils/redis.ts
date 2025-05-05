@@ -132,6 +132,14 @@ class RedisWrapper {
     return result;
   }
 
+  public async setExpiry(_keys: string[], _ttl: number) {
+    if (_keys && _keys.length > 0) {
+      await Promise.all(
+        _keys.map((key: string) => this.client?.expire(key, _ttl))
+      );
+    }
+  }
+
   public async getKeys(fetchLimit: number, _pattern?: string) {
     let keys: string[] = [];
 

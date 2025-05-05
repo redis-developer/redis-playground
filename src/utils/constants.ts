@@ -105,6 +105,13 @@ type DisableJsFlagsType = {
   [key in keyof typeof DISABLE_JS_FLAGS]: boolean;
 };
 
+enum USER_DATA_STATUS {
+  UNUSED = "UNUSED",
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  TO_BE_DELETED = "TO_BE_DELETED",
+}
+
 export {
   HTTP_STATUS_CODES,
   DISABLE_JS_DATA,
@@ -112,6 +119,7 @@ export {
   UPLOAD_TYPES_FOR_IMPORT,
   ImportStatus,
   REDIS_ALLOWED_COMMANDS,
+  USER_DATA_STATUS,
 };
 
 export type { DisableJsFlagsType };
