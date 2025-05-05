@@ -6,11 +6,7 @@ import { pgLoadDataSourceInRedis } from "../pg-load-data-source-in-redis.js";
 import { pgCreateIndexInRedis } from "../pg-create-index-in-redis.js";
 import { RedisWrapperST } from "../../../utils/redis.js";
 import { USER_DATA_STATUS } from "../../../utils/constants.js";
-import {
-  getUserDataKeyPrefix,
-  setUserDataInfo,
-  resetExpiryForUserData,
-} from "./user-data-config.js";
+import { getUserDataKeyPrefix, setUserDataInfo } from "./user-data-config.js";
 import { REDIS_KEYS } from "../../../config.js";
 
 const pgGenerateNewUserData = async (
@@ -33,6 +29,8 @@ const pgGenerateNewUserData = async (
     isAll: input.isAll,
     globalPrefix: globalPrefix,
   });
+
+  await setUserDataInfo(userId, "userId", userId);
 
   await setUserDataInfo(
     userId,

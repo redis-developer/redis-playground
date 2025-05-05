@@ -50,6 +50,10 @@ export const pgGenerateNewUserDataSchema = z.object({
   dataSourceIds: z.array(z.nativeEnum(DATA_SOURCE_ID)).optional(),
 });
 
+export const pgResetUserDataExpirySchema = z.object({
+  userId: z.string(),
+});
+
 export const pgGetQueryDataByIdSchema = z.object({
   queryIds: z.array(zodQueryId),
 });

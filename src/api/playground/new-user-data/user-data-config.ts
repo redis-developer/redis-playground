@@ -28,7 +28,7 @@ const setUserDataInfo = async (userId: string, prop: string, value: string) => {
   }
 };
 
-const setExpiryForUserData = async (userId: string) => {
+const _setUserDataExpiry = async (userId: string) => {
   try {
     const redisWrapperST = RedisWrapperST.getInstance();
     const userDataKeyPrefix = getUserDataKeyPrefix(userId);
@@ -59,14 +59,15 @@ const setExpiryForUserData = async (userId: string) => {
     }
   } catch (error) {
     LoggerCls.error(
-      `Error in setExpiryForUserData() for userId: ${userId}`,
+      `Error in setUserDataExpiry() for userId: ${userId}`,
       error
     );
     throw error;
   }
 };
 
-const resetExpiryForUserData = async (userId: string) => {
+const resetUserDataExpiry = async (userId: string) => {
+  let isReset = false;
   const redisWrapperST = RedisWrapperST.getInstance();
   const userDataKeyPrefix = getUserDataKeyPrefix(userId);
 
@@ -87,12 +88,15 @@ const resetExpiryForUserData = async (userId: string) => {
       isAfter(currentDate, slideExpiryDate) &&
       isBefore(currentDate, futureExpiryDate)
     ) {
-      await setExpiryForUserData(userId);
+      await _setUserDataExpiry(userId);
+      isReset = true;
     }
   } else {
     //first time setting expiry
-    await setExpiryForUserData(userId);
+    await _setUserDataExpiry(userId);
+    isReset = true;
   }
+  return isReset;
 };
 
-export { getUserDataKeyPrefix, setUserDataInfo, resetExpiryForUserData };
+export { getUserDataKeyPrefix, setUserDataInfo, resetUserDataExpiry };
