@@ -41,6 +41,7 @@ const pgGenerateNewUserData = async (
   return {
     pgLoadDataSourceInRedis: loadDataSourceObjArr,
     pgCreateIndexInRedis: createIndexObjArr,
+    userId: userId,
   };
 };
 
