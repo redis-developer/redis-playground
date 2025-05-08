@@ -5,6 +5,10 @@ import * as InputSchemas from "../../input-schema.js";
 import { RedisWrapperST } from "../../utils/redis.js";
 import { getQueryDataById } from "../../data/queries/index.js";
 import { MAX_CUSTOM_QUERY_SIZE } from "../../config.js";
+import {
+  replaceKeyPrefixInQuery,
+  replaceKeyPrefixInResult,
+} from "./new-user-data/user-data-config.js";
 
 const pgRunQuery = async (
   input: z.infer<typeof InputSchemas.pgRunQuerySchema>
@@ -22,15 +26,21 @@ const pgRunQuery = async (
   let result: any = {};
 
   if (input.customQuery) {
-    result = redisWrapperST.rawCommandExecute(input.customQuery);
+    const runQuery = replaceKeyPrefixInQuery(input.customQuery, input.userId);
+    result = await redisWrapperST.rawCommandExecute(runQuery);
   } else if (input.queryId) {
     const queryData = await getQueryDataById(input.queryId as QueryIdType);
     if (queryData?.query) {
-      result = redisWrapperST.rawCommandExecute(queryData.query);
+      const runQuery = replaceKeyPrefixInQuery(queryData.query, input.userId);
+      result = await redisWrapperST.rawCommandExecute(runQuery);
     }
   } else {
     throw new Error("No query provided!");
   }
+
+  //TODO: check if userId is passed in input, then call async pgResetUserDataExpiry()
+
+  result = replaceKeyPrefixInResult(result, input.userId);
   return result;
 };
 

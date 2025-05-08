@@ -71,6 +71,7 @@ export const pgGetDbIndexByIdSchema = z.object({
 export const pgRunQuerySchema = z.object({
   customQuery: z.string().optional(),
   queryId: zodQueryId.optional(),
+  userId: z.string().optional(),
 });
 
 export const pgSaveQuerySchema = z.object({

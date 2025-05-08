@@ -10,6 +10,35 @@ const getUserDataKeyPrefix = (userId: string) => {
   );
 };
 
+const replaceKeyPrefixInQuery = (query: string, userId?: string) => {
+  if (query && userId) {
+    const userAppKeyPrefix =
+      getUserDataKeyPrefix(userId) + REDIS_KEYS.PREFIX.APP;
+    const appKeyPrefix = REDIS_KEYS.PREFIX.APP;
+
+    query = query.replace(new RegExp(appKeyPrefix, "g"), userAppKeyPrefix);
+  }
+  return query;
+};
+
+const replaceKeyPrefixInResult = (result: any, userId?: string): any => {
+  if (result && userId) {
+    const userAppKeyPrefix =
+      getUserDataKeyPrefix(userId) + REDIS_KEYS.PREFIX.APP;
+    const appKeyPrefix = REDIS_KEYS.PREFIX.APP;
+
+    const replaceInStringFn = (str: string) =>
+      str.replace(new RegExp(userAppKeyPrefix, "g"), appKeyPrefix);
+
+    if (typeof result === "string") {
+      return replaceInStringFn(result);
+    } else if (Array.isArray(result)) {
+      return result.map((item) => replaceKeyPrefixInResult(item, userId));
+    }
+  }
+  return result;
+};
+
 const setUserDataInfo = async (userId: string, prop: string, value: string) => {
   try {
     const redisWrapperST = RedisWrapperST.getInstance();
@@ -99,4 +128,10 @@ const resetUserDataExpiry = async (userId: string) => {
   return isReset;
 };
 
-export { getUserDataKeyPrefix, setUserDataInfo, resetUserDataExpiry };
+export {
+  getUserDataKeyPrefix,
+  setUserDataInfo,
+  resetUserDataExpiry,
+  replaceKeyPrefixInQuery,
+  replaceKeyPrefixInResult,
+};

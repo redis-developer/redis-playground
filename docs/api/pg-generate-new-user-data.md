@@ -22,7 +22,8 @@ POST http://localhost:3001/api/pgGenerateNewUserData
     ],
     "pgCreateIndexInRedis": [
       // same as pgCreateIndexInRedis API response array
-    ]
+    ],
+    "userId": "123"
   },
   "error": null
 }
