@@ -3,6 +3,79 @@ import { REDIS_KEYS } from "../../../config.js";
 import { USER_DATA_STATUS } from "../../../utils/constants.js";
 import { RedisWrapperST } from "../../../utils/redis.js";
 import { LoggerCls } from "../../../utils/logger.js";
+import {
+  REDIS_WRITE_COMMANDS,
+  REDIS_WRITE_SPECIAL_COMMANDS,
+} from "../../../utils/constants.js";
+import { splitQuery } from "../../../utils/redis.js";
+
+const isRedisCommandHasPrefix = (
+  command: string,
+  checkPrefix: string
+): boolean => {
+  let result = false;
+
+  if (command && checkPrefix) {
+    const parts = splitQuery(command);
+    if (parts.length) {
+      let cmd = parts[0].toUpperCase();
+      let multiWordCmd =
+        parts.length > 1
+          ? `${parts[0].toUpperCase()} ${parts[1].toUpperCase()}`
+          : null;
+
+      const hasPrefix = (key: string): boolean =>
+        typeof key === "string" && key.startsWith(checkPrefix);
+
+      //special commands with different key positions
+      let specialCmd = REDIS_WRITE_SPECIAL_COMMANDS.find(
+        (c) => c.command === cmd || c.command === multiWordCmd
+      );
+
+      if (specialCmd && specialCmd.keyPattern) {
+        const pattern = specialCmd.keyPattern;
+        if (pattern.type === "step" && pattern.start && pattern.step) {
+          result = true;
+          for (let i = pattern.start; i < parts.length; i += pattern.step) {
+            if (!hasPrefix(parts[i])) {
+              result = false;
+              break;
+            }
+          }
+        } else if (pattern.type === "from" && pattern.start) {
+          result = true;
+          for (let i = pattern.start; i < parts.length; i++) {
+            if (!hasPrefix(parts[i])) {
+              result = false;
+              break;
+            }
+          }
+        } else if (
+          pattern.type === "indexes" &&
+          Array.isArray(pattern.indexes)
+        ) {
+          result = true;
+          for (let idx of pattern.indexes) {
+            if (!hasPrefix(parts[idx])) {
+              result = false;
+              break;
+            }
+          }
+        }
+      } else {
+        if (REDIS_WRITE_COMMANDS.includes(cmd)) {
+          result = hasPrefix(parts[1]); //regular commands have key at index 1
+        } else if (
+          multiWordCmd &&
+          REDIS_WRITE_COMMANDS.includes(multiWordCmd)
+        ) {
+          result = hasPrefix(parts[2]); //multi-word commands have key at index 2
+        }
+      }
+    }
+  }
+  return result;
+};
 
 const getUserDataKeyPrefix = (userId: string) => {
   return (
@@ -134,4 +207,5 @@ export {
   resetUserDataExpiry,
   replaceKeyPrefixInQuery,
   replaceKeyPrefixInResult,
+  isRedisCommandHasPrefix,
 };

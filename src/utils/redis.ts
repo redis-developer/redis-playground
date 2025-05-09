@@ -257,7 +257,7 @@ class RedisWrapperST extends RedisWrapper {
   }
 }
 
-export { RedisWrapper, RedisWrapperST };
+export { RedisWrapper, RedisWrapperST, splitQuery };
 
 /** Example Usage (RedisWrapper)
  
