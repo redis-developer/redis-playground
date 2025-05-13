@@ -258,9 +258,7 @@ const REDIS_WRITE_SPECIAL_COMMANDS = [
   { command: "PFMERGE", keyPattern: { type: "from", start: 1 } },
 ];
 
-const REDIS_ALLOWED_COMMANDS = [
-  ...REDIS_WRITE_COMMANDS,
-
+const REDIS_READ_COMMANDS = [
   // RediSearch commands
   "FT.INFO",
   "FT.SEARCH",
@@ -292,6 +290,11 @@ const REDIS_ALLOWED_COMMANDS = [
   "HMGET",
   "HGETALL",
   "HEXISTS",
+];
+
+const REDIS_ALLOWED_COMMANDS = [
+  ...REDIS_WRITE_COMMANDS,
+  ...REDIS_READ_COMMANDS,
 ];
 
 type DisableJsFlagsType = {

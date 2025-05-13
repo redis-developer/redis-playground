@@ -14,5 +14,8 @@ POST http://localhost:3001/api/pgRunQuery
 ## Response
 
 ```json
-//query result
+{
+  "queryResult": "query result",
+  "userId": "user_123"
+}
 ```

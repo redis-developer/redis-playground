@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { isRedisCommandHasPrefix } from "../user-data-config.js";
+import { verifyCommandPrefix } from "../user-data-config.js";
 import { splitQuery } from "../../../../utils/redis.js";
 
 const PREFIX = "pg:";
 
-const realTestCases: Record<
+const writeQueryDetails: Record<
   string,
   { query: string; expectAnswer: boolean; desc?: string }[]
 > = {
@@ -528,12 +528,12 @@ const realTestCases: Record<
 };
 
 function runRealTestCases() {
-  Object.entries(realTestCases).forEach(([cmd, cases]) => {
+  Object.entries(writeQueryDetails).forEach(([cmd, cases]) => {
     describe(cmd, () => {
       cases.forEach(({ query, expectAnswer, desc }) => {
         it(desc || `returns ${expectAnswer} for: ${query}`, () => {
-          const result = isRedisCommandHasPrefix(query, PREFIX);
-          if (!result === expectAnswer) {
+          const result = verifyCommandPrefix(query, PREFIX);
+          if (!result.isPrefixExists === expectAnswer) {
             // Debug output for failing cases
             // eslint-disable-next-line no-console
             console.log(
@@ -541,23 +541,26 @@ function runRealTestCases() {
               splitQuery(query)
             );
           }
-          expect(result).toBe(expectAnswer);
+          expect(result.isPrefixExists).toBe(expectAnswer);
         });
       });
     });
   });
 }
 
-describe("isRedisCommandHasPrefix (real queries)", () => {
+describe("verifyCommandPrefix (queries)", () => {
   runRealTestCases();
 
   it("returns false for empty command", () => {
-    expect(isRedisCommandHasPrefix("", PREFIX)).toBe(false);
+    let result = verifyCommandPrefix("", PREFIX);
+    expect(result.isPrefixExists).toBe(false);
   });
   it("returns false for empty prefix", () => {
-    expect(isRedisCommandHasPrefix("SET pg:key value", "")).toBe(false);
+    let result = verifyCommandPrefix("SET pg:key value", "");
+    expect(result.isPrefixExists).toBe(false);
   });
   it("returns false for non-write command", () => {
-    expect(isRedisCommandHasPrefix("GET pg:key", PREFIX)).toBe(false);
+    let result = verifyCommandPrefix("GET pg:key", PREFIX);
+    expect(result.isPrefixExists).toBe(false);
   });
 });

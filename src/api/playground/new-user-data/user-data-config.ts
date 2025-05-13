@@ -9,17 +9,15 @@ import {
 } from "../../../utils/constants.js";
 import { splitQuery } from "../../../utils/redis.js";
 
-const isRedisCommandHasPrefix = (
-  command: string,
-  checkPrefix: string
-): boolean => {
-  let result = false;
+const verifyCommandPrefix = (command: string, checkPrefix: string) => {
+  let isPrefixExists = false;
+  let isWriteCmd = false;
 
   if (command && checkPrefix) {
     const parts = splitQuery(command);
     if (parts.length) {
       let cmd = parts[0].toUpperCase();
-      let multiWordCmd =
+      let twoWordCmd =
         parts.length > 1
           ? `${parts[0].toUpperCase()} ${parts[1].toUpperCase()}`
           : null;
@@ -29,24 +27,25 @@ const isRedisCommandHasPrefix = (
 
       //special commands with different key positions
       let specialCmd = REDIS_WRITE_SPECIAL_COMMANDS.find(
-        (c) => c.command === cmd || c.command === multiWordCmd
+        (c) => c.command === cmd || c.command === twoWordCmd
       );
 
       if (specialCmd && specialCmd.keyPattern) {
+        isWriteCmd = true;
         const pattern = specialCmd.keyPattern;
         if (pattern.type === "step" && pattern.start && pattern.step) {
-          result = true;
+          isPrefixExists = true;
           for (let i = pattern.start; i < parts.length; i += pattern.step) {
             if (!hasPrefix(parts[i])) {
-              result = false;
+              isPrefixExists = false;
               break;
             }
           }
         } else if (pattern.type === "from" && pattern.start) {
-          result = true;
+          isPrefixExists = true;
           for (let i = pattern.start; i < parts.length; i++) {
             if (!hasPrefix(parts[i])) {
-              result = false;
+              isPrefixExists = false;
               break;
             }
           }
@@ -54,27 +53,29 @@ const isRedisCommandHasPrefix = (
           pattern.type === "indexes" &&
           Array.isArray(pattern.indexes)
         ) {
-          result = true;
+          isPrefixExists = true;
           for (let idx of pattern.indexes) {
             if (!hasPrefix(parts[idx])) {
-              result = false;
+              isPrefixExists = false;
               break;
             }
           }
         }
       } else {
         if (REDIS_WRITE_COMMANDS.includes(cmd)) {
-          result = hasPrefix(parts[1]); //regular commands have key at index 1
-        } else if (
-          multiWordCmd &&
-          REDIS_WRITE_COMMANDS.includes(multiWordCmd)
-        ) {
-          result = hasPrefix(parts[2]); //multi-word commands have key at index 2
+          isWriteCmd = true;
+          isPrefixExists = hasPrefix(parts[1]); //regular commands have key at index 1
+        } else if (twoWordCmd && REDIS_WRITE_COMMANDS.includes(twoWordCmd)) {
+          isWriteCmd = true;
+          isPrefixExists = hasPrefix(parts[2]); //twoWord commands have key at index 2
         }
       }
     }
   }
-  return result;
+  return {
+    isPrefixExists,
+    isWriteCmd,
+  };
 };
 
 const getUserDataKeyPrefix = (userId: string) => {
@@ -207,5 +208,5 @@ export {
   resetUserDataExpiry,
   replaceKeyPrefixInQuery,
   replaceKeyPrefixInResult,
-  isRedisCommandHasPrefix,
+  verifyCommandPrefix,
 };
