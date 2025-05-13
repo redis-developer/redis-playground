@@ -214,9 +214,21 @@ const REDIS_WRITE_COMMANDS = [
   "TS.DELETERULE",
 ];
 
+// Type for special command key patterns
+interface RedisSpecialCommandPattern {
+  command: string;
+  keyPattern: {
+    type: "step" | "from" | "indexes" | "none";
+    start?: number;
+    step?: number;
+    indexes?: number[];
+  };
+  matchPatternToStop?: (string | RegExp)[];
+}
+
 // Commands where the key is NOT at position 1 (0-based index)
 // Format: { command: string, keyPattern: { type: string, start: number, step?: number, indexes?: number[] } }
-const REDIS_WRITE_SPECIAL_COMMANDS = [
+const REDIS_WRITE_SPECIAL_COMMANDS: RedisSpecialCommandPattern[] = [
   // MSET, MSETNX: keys at even indexes (1, 3, 5, ...)
   { command: "MSET", keyPattern: { type: "step", start: 1, step: 2 } },
   { command: "MSETNX", keyPattern: { type: "step", start: 1, step: 2 } },
@@ -292,6 +304,23 @@ const REDIS_READ_COMMANDS = [
   "HEXISTS",
 ];
 
+const REDIS_READ_SPECIAL_COMMANDS: RedisSpecialCommandPattern[] = [
+  { command: "FT._LIST", keyPattern: { type: "none" } },
+
+  {
+    command: "JSON.MGET",
+    keyPattern: { type: "from", start: 1 },
+    matchPatternToStop: ["$", /^\$/],
+  },
+  {
+    command: "JSON.DEBUG",
+    keyPattern: { type: "from", start: 2 },
+    matchPatternToStop: ["$", /^\$/],
+  },
+  { command: "MGET", keyPattern: { type: "from", start: 1 } },
+  { command: "EXISTS", keyPattern: { type: "from", start: 1 } },
+];
+
 const REDIS_ALLOWED_COMMANDS = [
   ...REDIS_WRITE_COMMANDS,
   ...REDIS_READ_COMMANDS,
@@ -318,6 +347,8 @@ export {
   USER_DATA_STATUS,
   REDIS_WRITE_SPECIAL_COMMANDS,
   REDIS_WRITE_COMMANDS,
+  REDIS_READ_SPECIAL_COMMANDS,
+  REDIS_READ_COMMANDS,
 };
 
-export type { DisableJsFlagsType };
+export type { DisableJsFlagsType, RedisSpecialCommandPattern };

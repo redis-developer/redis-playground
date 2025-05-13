@@ -2,12 +2,14 @@ import { describe, it, expect } from "vitest";
 import { verifyCommandPrefix } from "../user-data-config.js";
 import { splitQuery } from "../../../../utils/redis.js";
 
-const PREFIX = "pg:";
-
-const writeQueryDetails: Record<
+type QueryDetailsType = Record<
   string,
   { query: string; expectAnswer: boolean; desc?: string }[]
-> = {
+>;
+
+const PREFIX = "pg:";
+
+const writeQueryDetails: QueryDetailsType = {
   // String commands
   SET: [
     { query: "SET pg:key value", expectAnswer: true },
@@ -527,8 +529,116 @@ const writeQueryDetails: Record<
   ],
 };
 
-function runRealTestCases() {
-  Object.entries(writeQueryDetails).forEach(([cmd, cases]) => {
+const readQueryDetails: QueryDetailsType = {
+  GET: [
+    { query: "GET pg:key", expectAnswer: true },
+    { query: "GET other:key", expectAnswer: false },
+  ],
+  MGET: [
+    { query: "MGET pg:k1 pg:k2", expectAnswer: true },
+    { query: "MGET pg:k1 other:k2", expectAnswer: false },
+  ],
+  EXISTS: [
+    { query: "EXISTS pg:k1 pg:k2", expectAnswer: true },
+    { query: "EXISTS pg:k1 other:k2", expectAnswer: false },
+  ],
+  TYPE: [
+    { query: "TYPE pg:key", expectAnswer: true },
+    { query: "TYPE other:key", expectAnswer: false },
+  ],
+  STRLEN: [
+    { query: "STRLEN pg:key", expectAnswer: true },
+    { query: "STRLEN other:key", expectAnswer: false },
+  ],
+  LLEN: [
+    { query: "LLEN pg:list", expectAnswer: true },
+    { query: "LLEN other:list", expectAnswer: false },
+  ],
+  SCARD: [
+    { query: "SCARD pg:set", expectAnswer: true },
+    { query: "SCARD other:set", expectAnswer: false },
+  ],
+  ZCARD: [
+    { query: "ZCARD pg:zset", expectAnswer: true },
+    { query: "ZCARD other:zset", expectAnswer: false },
+  ],
+  HLEN: [
+    { query: "HLEN pg:hash", expectAnswer: true },
+    { query: "HLEN other:hash", expectAnswer: false },
+  ],
+  HGET: [
+    { query: "HGET pg:hash field", expectAnswer: true },
+    { query: "HGET other:hash field", expectAnswer: false },
+  ],
+  HMGET: [
+    { query: "HMGET pg:hash field1 field2", expectAnswer: true },
+    { query: "HMGET other:hash field1 field2", expectAnswer: false },
+  ],
+  HGETALL: [
+    { query: "HGETALL pg:hash", expectAnswer: true },
+    { query: "HGETALL other:hash", expectAnswer: false },
+  ],
+  HEXISTS: [
+    { query: "HEXISTS pg:hash field", expectAnswer: true },
+    { query: "HEXISTS other:hash field", expectAnswer: false },
+  ],
+
+  "JSON.GET": [
+    { query: "JSON.GET pg:doc $", expectAnswer: true },
+    { query: "JSON.GET other:doc $", expectAnswer: false },
+  ],
+  "JSON.MGET": [
+    { query: "JSON.MGET pg:doc1 pg:doc2 $", expectAnswer: true },
+    { query: "JSON.MGET pg:doc1 other:doc2 $", expectAnswer: false },
+  ],
+  "JSON.TYPE": [
+    { query: "JSON.TYPE pg:doc $", expectAnswer: true },
+    { query: "JSON.TYPE other:doc $", expectAnswer: false },
+  ],
+  "JSON.STRLEN": [
+    { query: "JSON.STRLEN pg:doc $", expectAnswer: true },
+    { query: "JSON.STRLEN other:doc $", expectAnswer: false },
+  ],
+  "JSON.OBJKEYS": [
+    { query: "JSON.OBJKEYS pg:doc $", expectAnswer: true },
+    { query: "JSON.OBJKEYS other:doc $", expectAnswer: false },
+  ],
+  "JSON.OBJLEN": [
+    { query: "JSON.OBJLEN pg:doc $", expectAnswer: true },
+    { query: "JSON.OBJLEN other:doc $", expectAnswer: false },
+  ],
+  "JSON.DEBUG": [
+    { query: "JSON.DEBUG MEMORY pg:doc $", expectAnswer: true },
+    { query: "JSON.DEBUG MEMORY other:doc $", expectAnswer: false },
+  ],
+  "JSON.RESP": [
+    { query: "JSON.RESP pg:doc $", expectAnswer: true },
+    { query: "JSON.RESP other:doc $", expectAnswer: false },
+  ],
+
+  "FT.INFO": [
+    { query: "FT.INFO pg:index", expectAnswer: true },
+    { query: "FT.INFO other:index", expectAnswer: false },
+  ],
+  "FT.SEARCH": [
+    { query: "FT.SEARCH pg:index foo", expectAnswer: true },
+    { query: "FT.SEARCH other:index foo", expectAnswer: false },
+  ],
+  "FT._LIST": [
+    { query: "FT._LIST", expectAnswer: true }, // No key, always true
+  ],
+  "FT.EXPLAIN": [
+    { query: "FT.EXPLAIN pg:index foo", expectAnswer: true },
+    { query: "FT.EXPLAIN other:index foo", expectAnswer: false },
+  ],
+  "FT.AGGREGATE": [
+    { query: "FT.AGGREGATE pg:index '*'", expectAnswer: true },
+    { query: "FT.AGGREGATE other:index '*'", expectAnswer: false },
+  ],
+};
+
+function runQueryTestCases(queryDetails: QueryDetailsType) {
+  Object.entries(queryDetails).forEach(([cmd, cases]) => {
     describe(cmd, () => {
       cases.forEach(({ query, expectAnswer, desc }) => {
         it(desc || `returns ${expectAnswer} for: ${query}`, () => {
@@ -549,7 +659,9 @@ function runRealTestCases() {
 }
 
 describe("verifyCommandPrefix (queries)", () => {
-  runRealTestCases();
+  runQueryTestCases(writeQueryDetails);
+
+  runQueryTestCases(readQueryDetails);
 
   it("returns false for empty command", () => {
     let result = verifyCommandPrefix("", PREFIX);
@@ -557,10 +669,6 @@ describe("verifyCommandPrefix (queries)", () => {
   });
   it("returns false for empty prefix", () => {
     let result = verifyCommandPrefix("SET pg:key value", "");
-    expect(result.isPrefixExists).toBe(false);
-  });
-  it("returns false for non-write command", () => {
-    let result = verifyCommandPrefix("GET pg:key", PREFIX);
     expect(result.isPrefixExists).toBe(false);
   });
 });

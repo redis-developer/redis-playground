@@ -1,17 +1,19 @@
 import { addHours, differenceInSeconds, isAfter, isBefore } from "date-fns";
+
 import { REDIS_KEYS } from "../../../config.js";
-import { USER_DATA_STATUS } from "../../../utils/constants.js";
-import { RedisWrapperST } from "../../../utils/redis.js";
+import { RedisWrapperST, splitQuery } from "../../../utils/redis.js";
 import { LoggerCls } from "../../../utils/logger.js";
 import {
+  REDIS_READ_COMMANDS,
+  REDIS_READ_SPECIAL_COMMANDS,
   REDIS_WRITE_COMMANDS,
   REDIS_WRITE_SPECIAL_COMMANDS,
 } from "../../../utils/constants.js";
-import { splitQuery } from "../../../utils/redis.js";
 
 const verifyCommandPrefix = (command: string, checkPrefix: string) => {
   let isPrefixExists = false;
   let isWriteCmd = false;
+  let isReadCmd = false;
 
   if (command && checkPrefix) {
     const parts = splitQuery(command);
@@ -25,17 +27,41 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
       const hasPrefix = (key: string): boolean =>
         typeof key === "string" && key.startsWith(checkPrefix);
 
+      isWriteCmd = !!REDIS_WRITE_COMMANDS.find(
+        (c) => c === cmd || c === twoWordCmd
+      );
+
+      isReadCmd = !!REDIS_READ_COMMANDS.find(
+        (c) => c === cmd || c === twoWordCmd
+      );
+      const CHECK_COMMANDS = [...REDIS_WRITE_COMMANDS, ...REDIS_READ_COMMANDS];
+      const CHECK_SPECIAL_COMMANDS = [
+        ...REDIS_WRITE_SPECIAL_COMMANDS,
+        ...REDIS_READ_SPECIAL_COMMANDS,
+      ];
+
       //special commands with different key positions
-      let specialCmd = REDIS_WRITE_SPECIAL_COMMANDS.find(
+      let specialCmd = CHECK_SPECIAL_COMMANDS.find(
         (c) => c.command === cmd || c.command === twoWordCmd
       );
 
       if (specialCmd && specialCmd.keyPattern) {
-        isWriteCmd = true;
         const pattern = specialCmd.keyPattern;
-        if (pattern.type === "step" && pattern.start && pattern.step) {
+        const matchPatternToStop = specialCmd.matchPatternToStop;
+        const shouldStopOnPattern = (val: string) =>
+          matchPatternToStop &&
+          matchPatternToStop.some((pat) =>
+            typeof pat === "string" ? val === pat : pat.test(val)
+          );
+
+        if (pattern.type === "none") {
+          isPrefixExists = true;
+        } else if (pattern.type === "step" && pattern.start && pattern.step) {
           isPrefixExists = true;
           for (let i = pattern.start; i < parts.length; i += pattern.step) {
+            if (shouldStopOnPattern(parts[i])) {
+              break;
+            }
             if (!hasPrefix(parts[i])) {
               isPrefixExists = false;
               break;
@@ -44,6 +70,9 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
         } else if (pattern.type === "from" && pattern.start) {
           isPrefixExists = true;
           for (let i = pattern.start; i < parts.length; i++) {
+            if (shouldStopOnPattern(parts[i])) {
+              break;
+            }
             if (!hasPrefix(parts[i])) {
               isPrefixExists = false;
               break;
@@ -62,12 +91,12 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
           }
         }
       } else {
-        if (REDIS_WRITE_COMMANDS.includes(cmd)) {
-          isWriteCmd = true;
-          isPrefixExists = hasPrefix(parts[1]); //regular commands have key at index 1
-        } else if (twoWordCmd && REDIS_WRITE_COMMANDS.includes(twoWordCmd)) {
-          isWriteCmd = true;
-          isPrefixExists = hasPrefix(parts[2]); //twoWord commands have key at index 2
+        if (CHECK_COMMANDS.includes(cmd)) {
+          //regular commands have key at index 1
+          isPrefixExists = hasPrefix(parts[1]);
+        } else if (twoWordCmd && CHECK_COMMANDS.includes(twoWordCmd)) {
+          //twoWord commands have key at index 2
+          isPrefixExists = hasPrefix(parts[2]);
         }
       }
     }
@@ -75,6 +104,7 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
   return {
     isPrefixExists,
     isWriteCmd,
+    isReadCmd,
   };
 };
 
