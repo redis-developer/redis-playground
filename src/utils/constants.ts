@@ -1,3 +1,14 @@
+interface RedisSpecialCommandPattern {
+  command: string;
+  keyPattern: {
+    type: "step" | "from" | "indexes" | "none";
+    start?: number;
+    step?: number;
+    indexes?: number[];
+  };
+  matchPatternToStop?: (string | RegExp)[];
+}
+
 const HTTP_STATUS_CODES = {
   OK: 200,
   BAD_REQUEST: 400,
@@ -213,18 +224,6 @@ const REDIS_WRITE_COMMANDS = [
   "TS.CREATERULE",
   "TS.DELETERULE",
 ];
-
-// Type for special command key patterns
-interface RedisSpecialCommandPattern {
-  command: string;
-  keyPattern: {
-    type: "step" | "from" | "indexes" | "none";
-    start?: number;
-    step?: number;
-    indexes?: number[];
-  };
-  matchPatternToStop?: (string | RegExp)[];
-}
 
 // Commands where the key is NOT at position 1 (0-based index)
 // Format: { command: string, keyPattern: { type: string, start: number, step?: number, indexes?: number[] } }
