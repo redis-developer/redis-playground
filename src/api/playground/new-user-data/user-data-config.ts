@@ -8,6 +8,7 @@ import {
   REDIS_READ_SPECIAL_COMMANDS,
   REDIS_WRITE_COMMANDS,
   REDIS_WRITE_SPECIAL_COMMANDS,
+  USER_DATA_STATUS,
 } from "../../../utils/constants.js";
 
 const verifyCommandPrefix = (command: string, checkPrefix: string) => {
@@ -199,6 +200,24 @@ const _setUserDataExpiry = async (userId: string) => {
   }
 };
 
+const isUserDataActive = async (userId: string) => {
+  let isActive = false;
+  const redisWrapperST = RedisWrapperST.getInstance();
+  const userDataKeyPrefix = getUserDataKeyPrefix(userId);
+  const key = userDataKeyPrefix + REDIS_KEYS.LABELS.USER_INFO;
+
+  const userInfo: any = await redisWrapperST.client?.json.get(key);
+  const prop = REDIS_KEYS.LABELS.USER_INFO_DATA_STATUS;
+  if (
+    userInfo &&
+    prop in userInfo &&
+    userInfo[prop] === USER_DATA_STATUS.ACTIVE
+  ) {
+    isActive = true;
+  }
+  return isActive;
+};
+
 const resetUserDataExpiry = async (userId: string) => {
   let isReset = false;
   const redisWrapperST = RedisWrapperST.getInstance();
@@ -239,4 +258,5 @@ export {
   replaceKeyPrefixInQuery,
   replaceKeyPrefixInResult,
   verifyCommandPrefix,
+  isUserDataActive,
 };

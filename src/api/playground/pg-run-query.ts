@@ -10,6 +10,7 @@ import {
   replaceKeyPrefixInQuery,
   replaceKeyPrefixInResult,
   verifyCommandPrefix,
+  isUserDataActive,
 } from "./new-user-data/user-data-config.js";
 import { pgResetUserDataExpiry } from "./new-user-data/pg-reset-user-data-expiry.js";
 import { pgGetNewUserId } from "./new-user-data/pg-get-new-user-id.js";
@@ -18,6 +19,7 @@ const pgRunQuery = async (
   input: z.infer<typeof InputSchemas.pgRunQuerySchema>
 ) => {
   /**
+   *  - If userId is expired then make it empty
    *  - (validation) keys in query must have prefix eg: "pg:key"
    *  - if write command and no userId is passed then generate new userId
    *  - (before execution) modify keys in query to have userId prefix   (replaceKeyPrefixInQuery)
@@ -33,8 +35,16 @@ const pgRunQuery = async (
       message: `Custom query size exceeds maximum limit ${MAX_CUSTOM_QUERY_SIZE} characters`,
     };
   }
-  let genUserId = input.userId || "";
   let runQuery = "";
+  let genUserId = input.userId || "";
+
+  if (genUserId) {
+    const isActive = await isUserDataActive(genUserId);
+    if (!isActive) {
+      genUserId = "";
+      input.userId = "";
+    }
+  }
 
   if (input.customQuery) {
     runQuery = input.customQuery;

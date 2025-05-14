@@ -70,25 +70,6 @@ const getKeyPrefix = (dataSourceId: DATA_SOURCE_ID) => {
   return dataSource?.keyPrefix || "";
 };
 
-/*
-const getDbIndexes = () => {
-  let retObj = DB_INDEXES_RAW;
-
-  retObj = retObj.map((dbIndex) => {
-    dbIndex.keyPrefix = getKeyPrefix(dbIndex.dataSourceId);
-
-    let dbIndexQuery = dbIndex.dbIndexQuery;
-    dbIndexQuery = dbIndexQuery.replace("{dbIndexName}", dbIndex.dbIndexName);
-    dbIndexQuery = dbIndexQuery.replace("{keyPrefix}", dbIndex.keyPrefix);
-    dbIndex.dbIndexQuery = dbIndexQuery;
-
-    return dbIndex;
-  });
-
-  return retObj;
-};
- */
-
 const getFilteredDbIndexes = (
   dbIndexIds: DB_INDEX_ID[],
   isAll: boolean = false,
@@ -315,7 +296,6 @@ const DB_INDEXES_RAW: IDbIndex[] = [
     keyPrefix: getKeyPrefix(DATA_SOURCE_ID.BICYCLE_DS),
   },
 ];
-//const DB_INDEXES = getDbIndexes();
 
 const MIN_REDIS_SAMPLE_DATA_COUNT = 1;
 const MAX_REDIS_SAMPLE_DATA_COUNT = 1000;
@@ -323,9 +303,7 @@ const MAX_REDIS_SAMPLE_DATA_COUNT = 1000;
 //#endregion
 
 export {
-  // DATA_SOURCES,
   DATA_SOURCE_ID,
-  //DB_INDEXES,
   DB_INDEX_ID,
   DATA_TYPES,
   MIN_REDIS_SAMPLE_DATA_COUNT,
