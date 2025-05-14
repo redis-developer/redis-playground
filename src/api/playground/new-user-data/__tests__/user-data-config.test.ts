@@ -440,7 +440,10 @@ const writeQueryDetails: QueryDetailsType = {
   ],
   // RediSearch module commands
   "FT.CREATE": [
-    { query: "FT.CREATE pg:index ON HASH PREFIX 1 pg:", expectAnswer: true },
+    {
+      query: "FT.CREATE pg:index ON HASH PREFIX 1 keyPrefix:",
+      expectAnswer: true,
+    },
     {
       query: "FT.CREATE other:index ON HASH PREFIX 1 other:",
       expectAnswer: false,
