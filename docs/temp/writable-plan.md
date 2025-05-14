@@ -1,6 +1,9 @@
 ## TODO :
 
-- remove comments in config.ts
+-(docs) Have a architecture doc for this project which other tech team can understand
+
+- encryption for userId
+  - rate limiting sessions
 
 ## Rough Plan
 
@@ -30,10 +33,11 @@
 - `pgWritable:` : user session writable datasets
   - `pgWritable:savedQuery:XXX` - move all saved custom queries to this prefix (with or without session)
   - `pgWritable:users:XXX` - new data for users
-  - `pgWritable:users:XXX:status` -
+  - `pgWritable:users:XXX:info` -
     ```json
     {
       "userDataStatus": "ACTIVE", //UNUSED,ACTIVE, INACTIVE, TO_BE_DELETED
+      "userId": "XXX",
       "lastAccessedDateTime": "2021-01-01 12:00:00" //have ISO 8601 format
     }
     ```
@@ -44,16 +48,20 @@
 
 - `POST /api/getNewUserId` :
 
-  - get UNUSED userId from `pgWritable:users:` (check and update status immediately after access) + `generateNewUserData` in async for extra UNUSED data + `updateExpiryForUserData`
-  - else `generateNewUserData` in SYNC + `updateExpiryForUserData`
+  - get UNUSED userId from `pgWritable:users:` (check and update status immediately after access) + `generateNewUserData` in async for extra UNUSED data + `updateExpiryForUserData` + `addUserStatus`
+  - else `generateNewUserData` in SYNC + `updateExpiryForUserData` + `addUserStatus`
 
 ### Internal methods
 
 - `addUserStatus` : add user status to `pgWritable:users:XXX`
 - `updateExpiryForUserData` : update TTL for `pgWritable:user:XXX` data
-- update `pgRunQuery()` to add proper `pgWritable:user:XXX` key prefix for all queries (if userId is passed in API request)
+- update `pgRunQuery()` to add proper `pgWritable:user:XXX` key prefix for all queries (if userId is passed in API request) - do proper replace in query based on position or regex command rather than hardcoded replace +`update expiry`
 - update constants to allow specific write commands only
 - update share query functionality : they can share new user queries with others via share link (but now userId (u) in queryParams exists for shared URL)
+- `get data source by ID` - add prefix
+- `get db index by id` - can we fetch from database rather file ? (check caching issue)
+
+- //TODO: check if userId is passed in input, then call async pgResetUserDataExpiry()
 
 ### Note
 
@@ -61,7 +69,18 @@
 - Change the redis key prefix of shared custom query
 - reduce fashion ds from 10k products to 1k products (min data in each dataset)
 - Have a architecture doc for this project which other tech team can understand
+- allow popular data type commands only
+- test each query in unit test to check its accuracy
 
 ## UI
 
 - Have pop up if any write command issued for first time, which shows some info and button to create new user with data
+- Display userId in UI
+
+##
+
+Explain expiry logic (slide)
+
+---
+
+On every API call , if userId exists in header:
