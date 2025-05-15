@@ -148,6 +148,9 @@ const expiryHours = parseInt(process.env.USER_DATA_EXPIRY_IN_HOURS || "720");
 const slideExpiryPercent = parseInt(
   process.env.SLIDE_EXPIRY_IN_PERCENT || "50"
 );
+const nonUserSavedQueryExpiryHours = parseInt(
+  process.env.NON_USER_SAVED_QUERY_EXPIRY_IN_HOURS || "720"
+);
 
 const REDIS_KEYS = {
   PREFIX: {
@@ -165,6 +168,7 @@ const REDIS_KEYS = {
   EXPIRY: {
     USER_DATA_EXPIRY_IN_HOURS: expiryHours,
     SLIDE_EXPIRY_IN_PERCENT: slideExpiryPercent,
+    NON_USER_SAVED_QUERY_EXPIRY_IN_HOURS: nonUserSavedQueryExpiryHours,
   },
 };
 

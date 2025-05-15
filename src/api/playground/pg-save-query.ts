@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import * as InputSchemas from "../../input-schema.js";
 import { RedisWrapperST } from "../../utils/redis.js";
 import { REDIS_KEYS, MAX_CUSTOM_QUERY_SIZE } from "../../config.js";
+import { getUserDataKeyPrefix } from "./new-user-data/user-data-config.js";
 
 const pgSaveQuery = async (
   input: z.infer<typeof InputSchemas.pgSaveQuerySchema>
@@ -19,11 +20,20 @@ const pgSaveQuery = async (
 
   const redisWrapperST = RedisWrapperST.getInstance();
   let result: any = {};
+  let userId = input.userId || "";
+  let globalPrefix = "";
+
+  if (userId) {
+    globalPrefix = getUserDataKeyPrefix(userId);
+  }
 
   const partialId = input.partialId || uuidv4();
 
-  let key = REDIS_KEYS.PREFIX.APP + REDIS_KEYS.PREFIX.SAVED_QUERIES + partialId;
-  let expiry = 60 * 60 * 24 * 30; // 30 days
+  let key =
+    globalPrefix +
+    REDIS_KEYS.PREFIX.APP +
+    REDIS_KEYS.PREFIX.SAVED_QUERIES +
+    partialId;
 
   let jsonVal = {
     _id: key,
@@ -35,7 +45,12 @@ const pgSaveQuery = async (
   };
 
   await redisWrapperST.client?.json.set(key, ".", jsonVal);
-  await redisWrapperST.client?.expire(key, expiry);
+
+  if (!userId) {
+    let expiry =
+      REDIS_KEYS.EXPIRY.NON_USER_SAVED_QUERY_EXPIRY_IN_HOURS * 60 * 60; //seconds
+    await redisWrapperST.client?.expire(key, expiry);
+  }
 
   result = {
     _id: key,

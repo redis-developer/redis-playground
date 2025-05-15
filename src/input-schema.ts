@@ -81,10 +81,12 @@ export const pgSaveQuerySchema = z.object({
   customQuery: z.string(),
   categoryId: z.string().optional(),
   queryId: zodQueryId.optional(),
+  userId: z.string().optional(),
 });
 
 export const pgGetSavedQuerySchema = z.object({
   partialId: z.string(),
+  userId: z.string().optional(),
 });
 
 //--- types ---
