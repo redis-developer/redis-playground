@@ -8,6 +8,7 @@ interface IRedisCommandPattern {
     indexes?: number[];
   };
   matchPatternToStop?: (string | RegExp)[];
+  canDbInsert?: boolean;
 }
 
 const HTTP_STATUS_CODES = {
@@ -81,28 +82,30 @@ const DISABLE_JS_FLAGS = {
 
 const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
   // String commands
-  { command: "SET", category: "string" },
-  { command: "SETEX", category: "string" },
-  { command: "SETNX", category: "string" },
+  { command: "SET", category: "string", canDbInsert: true },
+  { command: "SETEX", category: "string", canDbInsert: true },
+  { command: "SETNX", category: "string", canDbInsert: true },
   { command: "SETRANGE", category: "string" },
   { command: "APPEND", category: "string" },
-  { command: "INCR", category: "string" },
-  { command: "INCRBY", category: "string" },
-  { command: "INCRBYFLOAT", category: "string" },
-  { command: "DECR", category: "string" },
-  { command: "DECRBY", category: "string" },
+  { command: "INCR", category: "string", canDbInsert: true },
+  { command: "INCRBY", category: "string", canDbInsert: true },
+  { command: "INCRBYFLOAT", category: "string", canDbInsert: true },
+  { command: "DECR", category: "string", canDbInsert: true },
+  { command: "DECRBY", category: "string", canDbInsert: true },
   {
     command: "MSET",
     category: "string",
     keyPattern: { type: "step", start: 1, step: 2 },
+    canDbInsert: true,
   },
   {
     command: "MSETNX",
     category: "string",
     keyPattern: { type: "step", start: 1, step: 2 },
+    canDbInsert: true,
   },
-  { command: "PSETEX", category: "string" },
-  { command: "GETSET", category: "string" },
+  { command: "PSETEX", category: "string", canDbInsert: true },
+  { command: "GETSET", category: "string", canDbInsert: true },
   {
     command: "STRALGO",
     category: "string",
@@ -110,17 +113,17 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
   },
 
   // Hash commands
-  { command: "HSET", category: "hash" },
-  { command: "HSETNX", category: "hash" },
-  { command: "HMSET", category: "hash" },
+  { command: "HSET", category: "hash", canDbInsert: true },
+  { command: "HSETNX", category: "hash", canDbInsert: true },
+  { command: "HMSET", category: "hash", canDbInsert: true },
   { command: "HDEL", category: "hash" },
-  { command: "HINCRBY", category: "hash" },
-  { command: "HINCRBYFLOAT", category: "hash" },
+  { command: "HINCRBY", category: "hash", canDbInsert: true },
+  { command: "HINCRBYFLOAT", category: "hash", canDbInsert: true },
 
   // List commands
-  { command: "LPUSH", category: "list" },
+  { command: "LPUSH", category: "list", canDbInsert: true },
   { command: "LPUSHX", category: "list" },
-  { command: "RPUSH", category: "list" },
+  { command: "RPUSH", category: "list", canDbInsert: true },
   { command: "RPUSHX", category: "list" },
   { command: "LINSERT", category: "list" },
   { command: "LPOP", category: "list" },
@@ -132,6 +135,7 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
     command: "RPOPLPUSH",
     category: "list",
     keyPattern: { type: "indexes", indexes: [1, 2] },
+    canDbInsert: true,
   },
   { command: "BLPOP", category: "list" },
   { command: "BRPOP", category: "list" },
@@ -139,36 +143,41 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
     command: "BRPOPLPUSH",
     category: "list",
     keyPattern: { type: "indexes", indexes: [1, 2] },
+    canDbInsert: true,
   },
 
   // Set commands
-  { command: "SADD", category: "set" },
+  { command: "SADD", category: "set", canDbInsert: true },
   { command: "SREM", category: "set" },
   {
     command: "SMOVE",
     category: "set",
     keyPattern: { type: "indexes", indexes: [1, 2] },
+    canDbInsert: true,
   },
   { command: "SPOP", category: "set" },
   {
     command: "SDIFFSTORE",
     category: "set",
     keyPattern: { type: "from", start: 2 },
+    canDbInsert: true,
   },
   {
     command: "SINTERSTORE",
     category: "set",
     keyPattern: { type: "from", start: 2 },
+    canDbInsert: true,
   },
   {
     command: "SUNIONSTORE",
     category: "set",
     keyPattern: { type: "from", start: 2 },
+    canDbInsert: true,
   },
 
   // Sorted Set commands
-  { command: "ZADD", category: "zset" },
-  { command: "ZINCRBY", category: "zset" },
+  { command: "ZADD", category: "zset", canDbInsert: true },
+  { command: "ZINCRBY", category: "zset", canDbInsert: true },
   { command: "ZREM", category: "zset" },
   { command: "ZREMRANGEBYRANK", category: "zset" },
   { command: "ZREMRANGEBYSCORE", category: "zset" },
@@ -177,11 +186,13 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
     command: "ZINTERSTORE",
     category: "zset",
     keyPattern: { type: "from", start: 3 },
+    canDbInsert: true,
   },
   {
     command: "ZUNIONSTORE",
     category: "zset",
     keyPattern: { type: "from", start: 3 },
+    canDbInsert: true,
   },
   { command: "BZPOPMIN", category: "zset" },
   { command: "BZPOPMAX", category: "zset" },
@@ -189,29 +200,32 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
   { command: "ZPOPMAX", category: "zset" },
 
   // HyperLogLog commands
-  { command: "PFADD", category: "hyperloglog" },
+  { command: "PFADD", category: "hyperloglog", canDbInsert: true },
   {
     command: "PFMERGE",
     category: "hyperloglog",
     keyPattern: { type: "from", start: 1 },
+    canDbInsert: true,
   },
 
   // Bitmap commands
-  { command: "SETBIT", category: "bitmap" },
+  { command: "SETBIT", category: "bitmap", canDbInsert: true },
   {
     command: "BITOP",
     category: "bitmap",
     keyPattern: { type: "from", start: 2 },
+    canDbInsert: true,
   },
 
   // Stream commands
-  { command: "XADD", category: "stream" },
+  { command: "XADD", category: "stream", canDbInsert: true },
   { command: "XDEL", category: "stream" },
   { command: "XTRIM", category: "stream" },
   {
     command: "XGROUP CREATE",
     category: "stream",
     keyPattern: { type: "indexes", indexes: [2] },
+    canDbInsert: true,
   },
   {
     command: "XGROUP SETID",
@@ -233,7 +247,7 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
   { command: "XAUTOCLAIM", category: "stream" },
 
   // Geo commands
-  { command: "GEOADD", category: "geo" },
+  { command: "GEOADD", category: "geo", canDbInsert: true },
   { command: "GEOHASH", category: "geo" },
   { command: "GEORADIUS", category: "geo" },
   { command: "GEORADIUSBYMEMBER", category: "geo" },
@@ -263,29 +277,31 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
   //"TOUCH",
 
   // RedisJSON module commands
-  { command: "JSON.SET", category: "json" },
+  { command: "JSON.SET", category: "json", canDbInsert: true },
   {
     command: "JSON.MSET",
     category: "json",
     keyPattern: { type: "step", start: 1, step: 3 },
+    canDbInsert: true,
   },
   {
     command: "JSON.MSETNX",
     category: "json",
     keyPattern: { type: "step", start: 1, step: 3 },
+    canDbInsert: true,
   },
   { command: "JSON.DEL", category: "json" },
-  { command: "JSON.NUMINCRBY", category: "json" },
-  { command: "JSON.NUMMULTBY", category: "json" },
-  { command: "JSON.STRAPPEND", category: "json" },
-  { command: "JSON.ARRAPPEND", category: "json" },
-  { command: "JSON.ARRINSERT", category: "json" },
+  { command: "JSON.NUMINCRBY", category: "json", canDbInsert: true },
+  { command: "JSON.NUMMULTBY", category: "json", canDbInsert: true },
+  { command: "JSON.STRAPPEND", category: "json", canDbInsert: true },
+  { command: "JSON.ARRAPPEND", category: "json", canDbInsert: true },
+  { command: "JSON.ARRINSERT", category: "json", canDbInsert: true },
   { command: "JSON.ARRPOP", category: "json" },
   { command: "JSON.ARRTRIM", category: "json" },
   //"JSON.CLEAR",
-  { command: "JSON.TOGGLE", category: "json" },
-  { command: "JSON.MERGE", category: "json" },
-  { command: "JSON.PATCH", category: "json" },
+  { command: "JSON.TOGGLE", category: "json", canDbInsert: true },
+  { command: "JSON.MERGE", category: "json", canDbInsert: true },
+  { command: "JSON.PATCH", category: "json", canDbInsert: true },
 
   // RediSearch module commands
   { command: "FT.CREATE", category: "search" },
@@ -293,27 +309,29 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
   //"FT.DROPINDEX",
   { command: "FT.ADD", category: "search" },
   //"FT.DEL",
-  { command: "FT.SUGADD", category: "search" },
+  { command: "FT.SUGADD", category: "search", canDbInsert: true },
   { command: "FT.SUGDEL", category: "search" },
   { command: "FT.SUGLEN", category: "search" },
   { command: "FT.SUGGET", category: "search" },
   { command: "FT.AGGREGATE", category: "search" },
 
   // TimeSeries module commands
-  { command: "TS.ADD", category: "timeseries" },
+  { command: "TS.ADD", category: "timeseries", canDbInsert: true },
   {
     command: "TS.MADD",
     category: "timeseries",
     keyPattern: { type: "step", start: 1, step: 3 },
+    canDbInsert: true,
   },
-  { command: "TS.INCRBY", category: "timeseries" },
-  { command: "TS.DECRBY", category: "timeseries" },
-  { command: "TS.CREATE", category: "timeseries" },
+  { command: "TS.INCRBY", category: "timeseries", canDbInsert: true },
+  { command: "TS.DECRBY", category: "timeseries", canDbInsert: true },
+  { command: "TS.CREATE", category: "timeseries", canDbInsert: true },
   { command: "TS.ALTER", category: "timeseries" },
   {
     command: "TS.CREATERULE",
     category: "timeseries",
     keyPattern: { type: "indexes", indexes: [1, 2] },
+    canDbInsert: true,
   },
   {
     command: "TS.DELETERULE",

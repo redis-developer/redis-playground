@@ -1,3 +1,5 @@
+import type { IRedisCommandPattern } from "../../../utils/constants.js";
+
 import { addHours, differenceInSeconds, isAfter, isBefore } from "date-fns";
 
 import { REDIS_KEYS } from "../../../config.js";
@@ -13,6 +15,8 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
   let isPrefixExists = false;
   let isWriteCmd = false;
   let isReadCmd = false;
+  let checkedKeys: string[] = [];
+  let cmdPattern: IRedisCommandPattern | undefined;
 
   if (command && checkPrefix) {
     const parts = splitQuery(command);
@@ -23,8 +27,18 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
           ? `${parts[0].toUpperCase()} ${parts[1].toUpperCase()}`
           : null;
 
-      const hasPrefix = (key: string): boolean =>
-        typeof key === "string" && key.startsWith(checkPrefix);
+      const hasPrefix = (key: string): boolean => {
+        let retVal = false;
+
+        if (typeof key === "string" && key.startsWith(checkPrefix)) {
+          retVal = true;
+          checkedKeys.push(key);
+        }
+
+        return retVal;
+      };
+
+      const CHECK_COMMANDS = [...REDIS_WRITE_COMMANDS, ...REDIS_READ_COMMANDS];
 
       isWriteCmd = !!REDIS_WRITE_COMMANDS.find(
         (c) => c.command === cmd || c.command === twoWordCmd
@@ -33,7 +47,10 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
       isReadCmd = !!REDIS_READ_COMMANDS.find(
         (c) => c.command === cmd || c.command === twoWordCmd
       );
-      const CHECK_COMMANDS = [...REDIS_WRITE_COMMANDS, ...REDIS_READ_COMMANDS];
+
+      cmdPattern = CHECK_COMMANDS.find(
+        (c) => c.command === cmd || c.command === twoWordCmd
+      );
 
       //special commands with different key positions (keyPattern)
       let specialCmd = CHECK_COMMANDS.find(
@@ -105,6 +122,8 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
     isPrefixExists,
     isWriteCmd,
     isReadCmd,
+    checkedKeys,
+    cmdPattern,
   };
 };
 
