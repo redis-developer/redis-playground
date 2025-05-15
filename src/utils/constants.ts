@@ -1,6 +1,7 @@
-interface RedisSpecialCommandPattern {
+interface IRedisCommandPattern {
   command: string;
-  keyPattern: {
+  category: string;
+  keyPattern?: {
     type: "step" | "from" | "indexes" | "none";
     start?: number;
     step?: number;
@@ -78,107 +79,183 @@ const DISABLE_JS_FLAGS = {
   ASYNC: true,
 };
 
-const REDIS_WRITE_COMMANDS = [
+const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
   // String commands
-  "SET",
-  "SETEX",
-  "SETNX",
-  "SETRANGE",
-  "APPEND",
-  "INCR",
-  "INCRBY",
-  "INCRBYFLOAT",
-  "DECR",
-  "DECRBY",
-  "MSET",
-  "MSETNX",
-  "PSETEX",
-  "GETSET",
-  "STRALGO",
+  { command: "SET", category: "string" },
+  { command: "SETEX", category: "string" },
+  { command: "SETNX", category: "string" },
+  { command: "SETRANGE", category: "string" },
+  { command: "APPEND", category: "string" },
+  { command: "INCR", category: "string" },
+  { command: "INCRBY", category: "string" },
+  { command: "INCRBYFLOAT", category: "string" },
+  { command: "DECR", category: "string" },
+  { command: "DECRBY", category: "string" },
+  {
+    command: "MSET",
+    category: "string",
+    keyPattern: { type: "step", start: 1, step: 2 },
+  },
+  {
+    command: "MSETNX",
+    category: "string",
+    keyPattern: { type: "step", start: 1, step: 2 },
+  },
+  { command: "PSETEX", category: "string" },
+  { command: "GETSET", category: "string" },
+  {
+    command: "STRALGO",
+    category: "string",
+    keyPattern: { type: "indexes", indexes: [2, 3] },
+  },
 
   // Hash commands
-  "HSET",
-  "HSETNX",
-  "HMSET",
-  "HDEL",
-  "HINCRBY",
-  "HINCRBYFLOAT",
+  { command: "HSET", category: "hash" },
+  { command: "HSETNX", category: "hash" },
+  { command: "HMSET", category: "hash" },
+  { command: "HDEL", category: "hash" },
+  { command: "HINCRBY", category: "hash" },
+  { command: "HINCRBYFLOAT", category: "hash" },
 
   // List commands
-  "LPUSH",
-  "LPUSHX",
-  "RPUSH",
-  "RPUSHX",
-  "LINSERT",
-  "LPOP",
-  "RPOP",
-  "LREM",
-  "LSET",
-  "LTRIM",
-  "RPOPLPUSH",
-  "BLPOP",
-  "BRPOP",
-  "BRPOPLPUSH",
+  { command: "LPUSH", category: "list" },
+  { command: "LPUSHX", category: "list" },
+  { command: "RPUSH", category: "list" },
+  { command: "RPUSHX", category: "list" },
+  { command: "LINSERT", category: "list" },
+  { command: "LPOP", category: "list" },
+  { command: "RPOP", category: "list" },
+  { command: "LREM", category: "list" },
+  { command: "LSET", category: "list" },
+  { command: "LTRIM", category: "list" },
+  {
+    command: "RPOPLPUSH",
+    category: "list",
+    keyPattern: { type: "indexes", indexes: [1, 2] },
+  },
+  { command: "BLPOP", category: "list" },
+  { command: "BRPOP", category: "list" },
+  {
+    command: "BRPOPLPUSH",
+    category: "list",
+    keyPattern: { type: "indexes", indexes: [1, 2] },
+  },
 
   // Set commands
-  "SADD",
-  "SREM",
-  "SMOVE",
-  "SPOP",
-  "SDIFFSTORE",
-  "SINTERSTORE",
-  "SUNIONSTORE",
+  { command: "SADD", category: "set" },
+  { command: "SREM", category: "set" },
+  {
+    command: "SMOVE",
+    category: "set",
+    keyPattern: { type: "indexes", indexes: [1, 2] },
+  },
+  { command: "SPOP", category: "set" },
+  {
+    command: "SDIFFSTORE",
+    category: "set",
+    keyPattern: { type: "from", start: 2 },
+  },
+  {
+    command: "SINTERSTORE",
+    category: "set",
+    keyPattern: { type: "from", start: 2 },
+  },
+  {
+    command: "SUNIONSTORE",
+    category: "set",
+    keyPattern: { type: "from", start: 2 },
+  },
 
   // Sorted Set commands
-  "ZADD",
-  "ZINCRBY",
-  "ZREM",
-  "ZREMRANGEBYRANK",
-  "ZREMRANGEBYSCORE",
-  "ZREMRANGEBYLEX",
-  "ZINTERSTORE",
-  "ZUNIONSTORE",
-  "BZPOPMIN",
-  "BZPOPMAX",
-  "ZPOPMIN",
-  "ZPOPMAX",
+  { command: "ZADD", category: "zset" },
+  { command: "ZINCRBY", category: "zset" },
+  { command: "ZREM", category: "zset" },
+  { command: "ZREMRANGEBYRANK", category: "zset" },
+  { command: "ZREMRANGEBYSCORE", category: "zset" },
+  { command: "ZREMRANGEBYLEX", category: "zset" },
+  {
+    command: "ZINTERSTORE",
+    category: "zset",
+    keyPattern: { type: "from", start: 3 },
+  },
+  {
+    command: "ZUNIONSTORE",
+    category: "zset",
+    keyPattern: { type: "from", start: 3 },
+  },
+  { command: "BZPOPMIN", category: "zset" },
+  { command: "BZPOPMAX", category: "zset" },
+  { command: "ZPOPMIN", category: "zset" },
+  { command: "ZPOPMAX", category: "zset" },
 
   // HyperLogLog commands
-  "PFADD",
-  "PFMERGE",
+  { command: "PFADD", category: "hyperloglog" },
+  {
+    command: "PFMERGE",
+    category: "hyperloglog",
+    keyPattern: { type: "from", start: 1 },
+  },
 
   // Bitmap commands
-  "SETBIT",
-  "BITOP",
+  { command: "SETBIT", category: "bitmap" },
+  {
+    command: "BITOP",
+    category: "bitmap",
+    keyPattern: { type: "from", start: 2 },
+  },
 
   // Stream commands
-  "XADD",
-  "XDEL",
-  "XTRIM",
-  "XGROUP CREATE",
-  "XGROUP SETID",
-  "XGROUP DESTROY",
-  "XGROUP DELCONSUMER",
-  "XACK",
-  "XCLAIM",
-  "XAUTOCLAIM",
+  { command: "XADD", category: "stream" },
+  { command: "XDEL", category: "stream" },
+  { command: "XTRIM", category: "stream" },
+  {
+    command: "XGROUP CREATE",
+    category: "stream",
+    keyPattern: { type: "indexes", indexes: [2] },
+  },
+  {
+    command: "XGROUP SETID",
+    category: "stream",
+    keyPattern: { type: "indexes", indexes: [2] },
+  },
+  {
+    command: "XGROUP DESTROY",
+    category: "stream",
+    keyPattern: { type: "indexes", indexes: [2] },
+  },
+  {
+    command: "XGROUP DELCONSUMER",
+    category: "stream",
+    keyPattern: { type: "indexes", indexes: [2] },
+  },
+  { command: "XACK", category: "stream" },
+  { command: "XCLAIM", category: "stream" },
+  { command: "XAUTOCLAIM", category: "stream" },
 
   // Geo commands
-  "GEOADD",
-  "GEOHASH",
-  "GEORADIUS",
-  "GEORADIUSBYMEMBER",
-  "GEOSEARCH",
+  { command: "GEOADD", category: "geo" },
+  { command: "GEOHASH", category: "geo" },
+  { command: "GEORADIUS", category: "geo" },
+  { command: "GEORADIUSBYMEMBER", category: "geo" },
+  { command: "GEOSEARCH", category: "geo" },
 
   // Keyspace (generic) commands
   //"DEL",
-  "EXPIRE",
-  "EXPIREAT",
-  "PERSIST",
-  "PEXPIRE",
-  "PEXPIREAT",
-  "RENAME",
-  "RENAMENX",
+  { command: "EXPIRE", category: "keyspace" },
+  { command: "EXPIREAT", category: "keyspace" },
+  { command: "PERSIST", category: "keyspace" },
+  { command: "PEXPIRE", category: "keyspace" },
+  { command: "PEXPIREAT", category: "keyspace" },
+  {
+    command: "RENAME",
+    category: "keyspace",
+    keyPattern: { type: "indexes", indexes: [1, 2] },
+  },
+  {
+    command: "RENAMENX",
+    category: "keyspace",
+    keyPattern: { type: "indexes", indexes: [1, 2] },
+  },
   //"UNLINK",
   //"MIGRATE",
   //"MOVE",
@@ -186,138 +263,111 @@ const REDIS_WRITE_COMMANDS = [
   //"TOUCH",
 
   // RedisJSON module commands
-  "JSON.SET",
-  "JSON.MSET",
-  "JSON.MSETNX",
-  "JSON.DEL",
-  "JSON.NUMINCRBY",
-  "JSON.NUMMULTBY",
-  "JSON.STRAPPEND",
-  "JSON.ARRAPPEND",
-  "JSON.ARRINSERT",
-  "JSON.ARRPOP",
-  "JSON.ARRTRIM",
+  { command: "JSON.SET", category: "json" },
+  {
+    command: "JSON.MSET",
+    category: "json",
+    keyPattern: { type: "step", start: 1, step: 3 },
+  },
+  {
+    command: "JSON.MSETNX",
+    category: "json",
+    keyPattern: { type: "step", start: 1, step: 3 },
+  },
+  { command: "JSON.DEL", category: "json" },
+  { command: "JSON.NUMINCRBY", category: "json" },
+  { command: "JSON.NUMMULTBY", category: "json" },
+  { command: "JSON.STRAPPEND", category: "json" },
+  { command: "JSON.ARRAPPEND", category: "json" },
+  { command: "JSON.ARRINSERT", category: "json" },
+  { command: "JSON.ARRPOP", category: "json" },
+  { command: "JSON.ARRTRIM", category: "json" },
   //"JSON.CLEAR",
-  "JSON.TOGGLE",
-  "JSON.MERGE",
-  "JSON.PATCH",
+  { command: "JSON.TOGGLE", category: "json" },
+  { command: "JSON.MERGE", category: "json" },
+  { command: "JSON.PATCH", category: "json" },
 
   // RediSearch module commands
-  "FT.CREATE",
-  "FT.ALTER",
+  { command: "FT.CREATE", category: "search" },
+  { command: "FT.ALTER", category: "search" },
   //"FT.DROPINDEX",
-  "FT.ADD",
+  { command: "FT.ADD", category: "search" },
   //"FT.DEL",
-  "FT.SUGADD",
-  "FT.SUGDEL",
-  "FT.SUGLEN",
-  "FT.SUGGET",
-  "FT.AGGREGATE",
+  { command: "FT.SUGADD", category: "search" },
+  { command: "FT.SUGDEL", category: "search" },
+  { command: "FT.SUGLEN", category: "search" },
+  { command: "FT.SUGGET", category: "search" },
+  { command: "FT.AGGREGATE", category: "search" },
 
   // TimeSeries module commands
-  "TS.ADD",
-  "TS.MADD",
-  "TS.INCRBY",
-  "TS.DECRBY",
-  "TS.CREATE",
-  "TS.ALTER",
-  "TS.CREATERULE",
-  "TS.DELETERULE",
-];
-
-// Commands where the key is NOT at position 1 (0-based index)
-// Format: { command: string, keyPattern: { type: string, start: number, step?: number, indexes?: number[] } }
-const REDIS_WRITE_SPECIAL_COMMANDS: RedisSpecialCommandPattern[] = [
-  // MSET, MSETNX: keys at even indexes (1, 3, 5, ...)
-  { command: "MSET", keyPattern: { type: "step", start: 1, step: 2 } },
-  { command: "MSETNX", keyPattern: { type: "step", start: 1, step: 2 } },
-  // keys from index 2 onwards
-  { command: "BITOP", keyPattern: { type: "from", start: 2 } },
-  { command: "SDIFFSTORE", keyPattern: { type: "from", start: 2 } },
-  { command: "SINTERSTORE", keyPattern: { type: "from", start: 2 } },
-  { command: "SUNIONSTORE", keyPattern: { type: "from", start: 2 } },
-  // keys from index 3 onwards
-  { command: "ZINTERSTORE", keyPattern: { type: "from", start: 3 } },
-  { command: "ZUNIONSTORE", keyPattern: { type: "from", start: 3 } },
-  // keys at index 1 and 2
-  { command: "RPOPLPUSH", keyPattern: { type: "indexes", indexes: [1, 2] } },
-  { command: "BRPOPLPUSH", keyPattern: { type: "indexes", indexes: [1, 2] } },
-  { command: "SMOVE", keyPattern: { type: "indexes", indexes: [1, 2] } },
-  { command: "RENAME", keyPattern: { type: "indexes", indexes: [1, 2] } },
-  { command: "RENAMENX", keyPattern: { type: "indexes", indexes: [1, 2] } },
+  { command: "TS.ADD", category: "timeseries" },
+  {
+    command: "TS.MADD",
+    category: "timeseries",
+    keyPattern: { type: "step", start: 1, step: 3 },
+  },
+  { command: "TS.INCRBY", category: "timeseries" },
+  { command: "TS.DECRBY", category: "timeseries" },
+  { command: "TS.CREATE", category: "timeseries" },
+  { command: "TS.ALTER", category: "timeseries" },
   {
     command: "TS.CREATERULE",
+    category: "timeseries",
     keyPattern: { type: "indexes", indexes: [1, 2] },
   },
   {
     command: "TS.DELETERULE",
+    category: "timeseries",
     keyPattern: { type: "indexes", indexes: [1, 2] },
   },
-  //  key at index 2
-  { command: "XGROUP CREATE", keyPattern: { type: "indexes", indexes: [2] } },
-  { command: "XGROUP SETID", keyPattern: { type: "indexes", indexes: [2] } },
-  { command: "XGROUP DESTROY", keyPattern: { type: "indexes", indexes: [2] } },
-  {
-    command: "XGROUP DELCONSUMER",
-    keyPattern: { type: "indexes", indexes: [2] },
-  },
-  // others
-  { command: "STRALGO", keyPattern: { type: "indexes", indexes: [2, 3] } },
-  { command: "JSON.MSET", keyPattern: { type: "step", start: 1, step: 3 } },
-  { command: "JSON.MSETNX", keyPattern: { type: "step", start: 1, step: 3 } },
-  { command: "TS.MADD", keyPattern: { type: "step", start: 1, step: 3 } },
-  { command: "PFMERGE", keyPattern: { type: "from", start: 1 } },
 ];
 
-const REDIS_READ_COMMANDS = [
+const REDIS_READ_COMMANDS: IRedisCommandPattern[] = [
   // RediSearch commands
-  "FT.INFO",
-  "FT.SEARCH",
-  "FT._LIST",
-  "FT.EXPLAIN",
-  "FT.AGGREGATE",
+  { command: "FT.INFO", category: "search" },
+  { command: "FT.SEARCH", category: "search" },
+  { command: "FT._LIST", category: "search", keyPattern: { type: "none" } },
+  { command: "FT.EXPLAIN", category: "search" },
+  { command: "FT.AGGREGATE", category: "search" },
 
   // RedisJSON commands
-  "JSON.GET",
-  "JSON.MGET",
-  "JSON.TYPE",
-  "JSON.STRLEN",
-  "JSON.OBJKEYS",
-  "JSON.OBJLEN",
-  "JSON.DEBUG",
-  "JSON.RESP",
-
-  // Redis Core read commands
-  "GET",
-  "MGET",
-  "EXISTS",
-  "TYPE",
-  "STRLEN",
-  "LLEN",
-  "SCARD",
-  "ZCARD",
-  "HLEN",
-  "HGET",
-  "HMGET",
-  "HGETALL",
-  "HEXISTS",
-];
-
-const REDIS_READ_SPECIAL_COMMANDS: RedisSpecialCommandPattern[] = [
-  { command: "FT._LIST", keyPattern: { type: "none" } },
-
+  { command: "JSON.GET", category: "json" },
   {
     command: "JSON.MGET",
+    category: "json",
     keyPattern: { type: "from", start: 1 },
     matchPatternToStop: ["$", /^\$/],
   },
+  { command: "JSON.TYPE", category: "json" },
+  { command: "JSON.STRLEN", category: "json" },
+  { command: "JSON.OBJKEYS", category: "json" },
+  { command: "JSON.OBJLEN", category: "json" },
   {
     command: "JSON.DEBUG",
+    category: "json",
     keyPattern: { type: "from", start: 2 },
     matchPatternToStop: ["$", /^\$/],
   },
-  { command: "MGET", keyPattern: { type: "from", start: 1 } },
-  { command: "EXISTS", keyPattern: { type: "from", start: 1 } },
+  { command: "JSON.RESP", category: "json" },
+
+  // Redis Core read commands
+  { command: "GET", category: "core" },
+  { command: "MGET", category: "core", keyPattern: { type: "from", start: 1 } },
+  {
+    command: "EXISTS",
+    category: "core",
+    keyPattern: { type: "from", start: 1 },
+  },
+  { command: "TYPE", category: "core" },
+  { command: "STRLEN", category: "core" },
+  { command: "LLEN", category: "core" },
+  { command: "SCARD", category: "core" },
+  { command: "ZCARD", category: "core" },
+  { command: "HLEN", category: "core" },
+  { command: "HGET", category: "core" },
+  { command: "HMGET", category: "core" },
+  { command: "HGETALL", category: "core" },
+  { command: "HEXISTS", category: "core" },
 ];
 
 const REDIS_ALLOWED_COMMANDS = [
@@ -344,10 +394,8 @@ export {
   ImportStatus,
   REDIS_ALLOWED_COMMANDS,
   USER_DATA_STATUS,
-  REDIS_WRITE_SPECIAL_COMMANDS,
   REDIS_WRITE_COMMANDS,
-  REDIS_READ_SPECIAL_COMMANDS,
   REDIS_READ_COMMANDS,
 };
 
-export type { DisableJsFlagsType, RedisSpecialCommandPattern };
+export type { DisableJsFlagsType, IRedisCommandPattern };

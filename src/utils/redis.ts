@@ -4,17 +4,20 @@ import { LoggerCls } from "./logger.js";
 import { REDIS_ALLOWED_COMMANDS } from "./constants.js";
 type RedisClientType = ReturnType<typeof createClient>;
 
-function isCommandAllowed(_commandKeyword: string) {
+const isCommandAllowed = (_commandKeyword: string) => {
   let isAllowed = false;
+  const commandObj = REDIS_ALLOWED_COMMANDS.find(
+    (c) => c.command === _commandKeyword
+  );
 
-  if (_commandKeyword && REDIS_ALLOWED_COMMANDS.includes(_commandKeyword)) {
+  if (commandObj) {
     isAllowed = true;
   }
 
   return isAllowed;
-}
+};
 
-function splitQuery(query: string) {
+const splitQuery = (query: string) => {
   /**
        inputQuery = "FT.SEARCH '{dbIndexName}' '@brandName:{nike} @gender:{men}'";
        output = ["FT.SEARCH", "{dbIndexName}", "@brandName:{nike} @gender:{men}"]
@@ -82,7 +85,7 @@ function splitQuery(query: string) {
   });
 
   return retArr;
-}
+};
 
 class RedisWrapper {
   client: RedisClientType | null = null;
@@ -217,10 +220,18 @@ class RedisWrapper {
   ) {
     // const commandArray = _command.trim().split(/\s+/);
     const commandArray = splitQuery(_command);
+
+    let cmd = commandArray[0].toUpperCase();
+    let twoWordCmd =
+      commandArray.length > 1
+        ? `${commandArray[0].toUpperCase()} ${commandArray[1].toUpperCase()}`
+        : "";
+
     if (
       commandArray?.length &&
       !_skipCmdCheck &&
-      !isCommandAllowed(commandArray[0])
+      !isCommandAllowed(cmd) &&
+      !isCommandAllowed(twoWordCmd)
     ) {
       throw new Error("Command not allowed");
     }

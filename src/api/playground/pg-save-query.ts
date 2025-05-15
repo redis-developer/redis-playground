@@ -46,9 +46,14 @@ const pgSaveQuery = async (
 
   await redisWrapperST.client?.json.set(key, ".", jsonVal);
 
+  let expiry = 0;
   if (!userId) {
-    let expiry =
-      REDIS_KEYS.EXPIRY.NON_USER_SAVED_QUERY_EXPIRY_IN_HOURS * 60 * 60; //seconds
+    expiry = REDIS_KEYS.EXPIRY.NON_USER_SAVED_QUERY_EXPIRY_IN_HOURS * 60 * 60; //seconds
+  } else {
+    expiry = REDIS_KEYS.EXPIRY.USER_DATA_EXPIRY_IN_HOURS * 60 * 60; //seconds
+  }
+
+  if (expiry) {
     await redisWrapperST.client?.expire(key, expiry);
   }
 

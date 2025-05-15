@@ -5,9 +5,7 @@ import { RedisWrapperST, splitQuery } from "../../../utils/redis.js";
 import { LoggerCls } from "../../../utils/logger.js";
 import {
   REDIS_READ_COMMANDS,
-  REDIS_READ_SPECIAL_COMMANDS,
   REDIS_WRITE_COMMANDS,
-  REDIS_WRITE_SPECIAL_COMMANDS,
   USER_DATA_STATUS,
 } from "../../../utils/constants.js";
 
@@ -29,26 +27,23 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
         typeof key === "string" && key.startsWith(checkPrefix);
 
       isWriteCmd = !!REDIS_WRITE_COMMANDS.find(
-        (c) => c === cmd || c === twoWordCmd
+        (c) => c.command === cmd || c.command === twoWordCmd
       );
 
       isReadCmd = !!REDIS_READ_COMMANDS.find(
-        (c) => c === cmd || c === twoWordCmd
+        (c) => c.command === cmd || c.command === twoWordCmd
       );
       const CHECK_COMMANDS = [...REDIS_WRITE_COMMANDS, ...REDIS_READ_COMMANDS];
-      const CHECK_SPECIAL_COMMANDS = [
-        ...REDIS_WRITE_SPECIAL_COMMANDS,
-        ...REDIS_READ_SPECIAL_COMMANDS,
-      ];
 
-      //special commands with different key positions
-      let specialCmd = CHECK_SPECIAL_COMMANDS.find(
-        (c) => c.command === cmd || c.command === twoWordCmd
+      //special commands with different key positions (keyPattern)
+      let specialCmd = CHECK_COMMANDS.find(
+        (c) => (c.command === cmd || c.command === twoWordCmd) && c.keyPattern
       );
 
       if (specialCmd && specialCmd.keyPattern) {
         const pattern = specialCmd.keyPattern;
         const matchPatternToStop = specialCmd.matchPatternToStop;
+
         const shouldStopOnPattern = (val: string) =>
           matchPatternToStop &&
           matchPatternToStop.some((pat) =>
@@ -92,10 +87,14 @@ const verifyCommandPrefix = (command: string, checkPrefix: string) => {
           }
         }
       } else {
-        if (CHECK_COMMANDS.includes(cmd)) {
+        const cmdObj = CHECK_COMMANDS.find((c) => c.command === cmd);
+        const twoWordCmdObj = CHECK_COMMANDS.find(
+          (c) => c.command === twoWordCmd
+        );
+        if (cmdObj) {
           //regular commands have key at index 1
           isPrefixExists = hasPrefix(parts[1]);
-        } else if (twoWordCmd && CHECK_COMMANDS.includes(twoWordCmd)) {
+        } else if (twoWordCmdObj) {
           //twoWord commands have key at index 2
           isPrefixExists = hasPrefix(parts[2]);
         }
