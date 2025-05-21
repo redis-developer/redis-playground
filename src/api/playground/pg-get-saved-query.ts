@@ -3,7 +3,10 @@ import { z } from "zod";
 import * as InputSchemas from "../../input-schema.js";
 import { RedisWrapperST } from "../../utils/redis.js";
 import { REDIS_KEYS } from "../../config.js";
-import { getUserDataKeyPrefix } from "./new-user-data/user-data-config.js";
+import {
+  getUserDataKeyPrefix,
+  isUserDataActive,
+} from "./new-user-data/user-data-config.js";
 
 const pgGetSavedQuery = async (
   input: z.infer<typeof InputSchemas.pgGetSavedQuerySchema>
@@ -15,6 +18,14 @@ const pgGetSavedQuery = async (
   let globalPrefix = "";
 
   if (userId) {
+    const isActive = await isUserDataActive(userId);
+    if (!isActive) {
+      throw {
+        userMessage: `User ${userId} is not active`,
+        message: `User ${userId} is not active`,
+      };
+    }
+
     globalPrefix = getUserDataKeyPrefix(userId);
   }
 
