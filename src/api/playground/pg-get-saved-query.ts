@@ -17,14 +17,9 @@ const pgGetSavedQuery = async (
   let userId = input.userId || "";
   let globalPrefix = "";
 
+  let isUserActive = false;
   if (userId) {
-    const isActive = await isUserDataActive(userId);
-    if (!isActive) {
-      throw {
-        userMessage: `User ${userId} is not active`,
-        message: `User ${userId} is not active`,
-      };
-    }
+    isUserActive = await isUserDataActive(userId);
 
     globalPrefix = getUserDataKeyPrefix(userId);
   }
@@ -36,6 +31,13 @@ const pgGetSavedQuery = async (
     input.partialId;
 
   let result = await redisWrapperST.client?.json.get(key);
+
+  if (!isUserActive && !result) {
+    throw {
+      userMessage: `User ${userId} is not active`,
+      message: `User ${userId} is not active`,
+    };
+  }
 
   return result;
 };
