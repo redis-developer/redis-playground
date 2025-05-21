@@ -10,7 +10,10 @@ import {
   DATA_TYPES,
   getFilteredDataSources,
 } from "../../config.js";
-import { getUserDataKeyPrefix } from "./new-user-data/user-data-config.js";
+import {
+  getUserDataKeyPrefix,
+  isUserDataActive,
+} from "./new-user-data/user-data-config.js";
 
 const removeVectorFieldsFromList = (list: any[], dataSource: IDataSource) => {
   let retObjArr: any[] = [];
@@ -59,7 +62,12 @@ const pgGetSampleDataByDataSourceId = async (
   let globalPrefix = "";
 
   if (userId) {
-    globalPrefix = getUserDataKeyPrefix(userId);
+    const isActive = await isUserDataActive(userId);
+    if (!isActive) {
+      userId = "";
+    } else {
+      globalPrefix = getUserDataKeyPrefix(userId);
+    }
   }
 
   if (input.dataSourceId) {

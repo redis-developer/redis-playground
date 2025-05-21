@@ -15,7 +15,7 @@ const pgGenerateNewUserData = async (
   InputSchemas.pgGenerateNewUserDataSchema.parse(input); // validate input
 
   const redisWrapperST = RedisWrapperST.getInstance();
-  let userId = input.userId || uuidv4();
+  let userId = input.customUserId || uuidv4();
   let globalPrefix = getUserDataKeyPrefix(userId);
 
   let loadDataSourceObjArr = await pgLoadDataSourceInRedis({

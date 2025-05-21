@@ -5,7 +5,7 @@
 ```json
 POST http://localhost:3001/api/pgGenerateNewUserData
 {
-  "userId":"123",
+  "customUserId":"123",
   "isAll":false,
   "dbIndexIds":["FASHION_DS_SEARCH_INDEX"],
   "dataSourceIds":["FASHION_DS"]
