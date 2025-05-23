@@ -57,6 +57,13 @@ const pgRunQuery = async (
     }
   }
 
+  if (!runQuery) {
+    throw new CustomErrorCls(
+      `No query provided!`,
+      `Please provide a valid query.`
+    );
+  }
+
   const cmdDetails = verifyCommandPrefix(runQuery, REDIS_KEYS.PREFIX.APP);
 
   if (!cmdDetails.isPrefixExists) {
@@ -83,8 +90,6 @@ const pgRunQuery = async (
     if (genUserId) {
       result = replaceKeyPrefixInResult(result, genUserId);
     }
-  } else {
-    throw new Error("No query provided!");
   }
 
   if (
