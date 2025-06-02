@@ -1,32 +1,47 @@
-# Redis Sandbox
+# How to Use Redis Sandbox
 
-Redis Sandbox is a tool that allows you to run Redis commands in a sandbox environment.
-You can choose existing queries or write your own queries and run them to see the results.
+Redis Sandbox (also known as Redis Playground) is an interactive tool that lets you experiment with Redis commands in a safe, isolated environment—no setup required. Whether you’re learning Redis, testing queries, or demonstrating features, Redis Sandbox is the perfect place to get hands-on experience.
 
-## Product Tour
+Main features include:
 
-### URL
+- Run read queries
+- Run write queries (session based)
+- View query history
+- Share queries (with or without modification)
 
-Product is hosted at [https://redis.io/try/sandbox/](https://redis.io/try/sandbox/)
+## Accessing Redis Sandbox
+
+Visit the Redis Sandbox at: [https://redis.io/try/sandbox/](https://redis.io/try/sandbox/)
+
+You’ll be greeted with an interface designed for quick experimentation.
 
 ![Landing screen](./images/landing-screen.png)
 
-### Select existing query
+## Exploring the Interface
 
-Click on `Select query` from the left sidebar.
+### Selecting a Predefined Query
+
+- Click `Select query` in the left sidebar.
 
 ![Select existing query](./images/select-query.png)
 
-`Select query` opens a popup with list of predefined queries.
+- A popup will appear with a list of predefined queries covering common Redis operations.
+
 ![Query popup](./images/query-popup.png)
 
-Click on any query to load it in the query panel.
+- Click any query to load it into the query editor.
 
-![Query popup item click](./images/query-pupup-item-click.png)
+![Query popup item click](./images/query-popup-item-click.png)
+
+### Writing Your Own Query
+
+- You can also type or paste your own Redis commands directly into the query editor.
+- The editor supports multi-line queries and syntax highlighting for better readability.
 
 ### Query Panel
 
-Selected query will be displayed in the query panel.
+- Displays the currently selected or written query.
+- You can edit, run, or reset the query here.
 
 ![Query Panel](./images/query-panel-tour-step.png)
 
@@ -34,33 +49,33 @@ Selected query will be displayed in the query panel.
 
 ### DBIndex Panel
 
-This panel shows the Index details associated with the selected query.
+- Shows index details related to the selected query.
 
 ![DB Index Panel](./images/dbindex-panel-tour-step.png)
 
 ### DataSource Panel
 
-This panel shows the sample data associated with the selected query and Index.
+- Displays sample data associated with the selected query and index.
+- Helps you visualize the data your query will operate on.
 
 ![DataSource Panel](./images/datasource-panel-tour-step.png)
 
 ### Run Query
 
-Click on "Run" button to run the query.
+- Click the `Run` button to execute your query.
+- The results will appear in the Results panel.
 
 ![Run query](./images/run-query-tour-step.png)
 
 ### Results Panel
 
-Results of the query will be displayed in the results panel.
+- View the output of your query in a structured table or as raw text.
 
 ![Results Panel](./images/results-panel-tour-step.png)
 
 ![Results Panel](./images/results-panel.png)
 
-### Toggle Results View
-
-Click on `Switch View` icon in Results panel header to toggle between table view and raw output.
+- Toggle between views using the `Switch View` icon in the Results panel header.
 
 ![Switch Results View table view](./images/switch-results-view-tbl.png)
 
@@ -68,43 +83,68 @@ Click on `Switch View` icon in Results panel header to toggle between table view
 
 ### Share Query
 
-Click on `Share` button to share the query with others.
+- Click the Share button to generate a shareable link for your current query.
+- You can modify the query before sharing.
 
 ![Share Query](./images/share-query-tour-step.png)
 
-Note: You can also modify the query and share it with others.
+Note: You can also modify the query before sharing it with others.
 
 ### Reset Query
 
-If you have modified the query, click on `Reset` button to reset the query to the original state.
+- Made changes you want to undo? Click `Reset` to revert to the originally selected query.
 
 ![Reset Query](./images/reset-query-tour-step.png)
 
-### Navigate to related queries
+### Navigating related queries
 
-Can select related queries in the group by clicking on the query name in the left sidebar.
+- Quickly switch between related queries by clicking their names in the left sidebar.
 
 ![Navigate to related queries](./images/navigate-related-queries-tour-step.png)
 
 ### Query History
 
-Click on the history icon in the query panel header.
-![Query history icon click](./images/query-history-icon.png)
+- Click the history icon in the query panel header to view your past successful queries.
 
-You can view the list of queries you have run successfully in the past.
+![Query history icon click](./images/query-history-icon.png)
 
 ![Query history popup](./images/query-history-popup.png)
 
-Can click on any query to load it in the main query panel and also run it again by clicking on `Run` button.
+- Reload any previous query with a single click and run it again.
 
 ![Query history popup item click](./images/query-history-popup-load-query.png)
 
-Click on `Delete` button in popup to delete the full query history stored in browser.
+- Delete your query history if needed.
 
 ![Delete query history](./images/query-history-popup-delete.png)
 
 ### Replay tour
 
-Can click on `Replay tour` link in the left sidebar to replay the product tour through tooltips.
+- Click `Replay tour` in the sidebar to revisit the guided walkthrough.
 
 ![Replay tour link](./images/replay-tour.png)
+
+## Session (write) Queries
+
+- When you execute a write query, a unique session is created for you.
+
+Sample write query:
+![Session write query](./images/session-write-query.png)
+
+- All subsequent queries in that session will operate on your session’s data.
+- Sessions have an expiry setting; data is deleted after the session expires.
+- Note: Every key in your write query must use the `pg:` prefix.
+
+**The session status is shown in the header:**
+
+- Before starting a session:
+  ![Header before session](./images/header-before-session.png)
+
+- After starting a session:
+  ![Header after session](./images/header-after-session.png)
+
+## Resources
+
+- [Docs](https://redis.io/docs/latest/) - Official Redis documentation.
+- [Redis University](https://university.redis.io/) - Free online courses and tutorials.
+- [Redis Cloud](https://cloud.redis.io/) - Managed Redis service.

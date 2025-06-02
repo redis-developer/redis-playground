@@ -1,5 +1,3 @@
 # Redis Playground
 
-Play with raw Redis commands.
-
-https://redis.io/try/sandbox/
+- [Docs](./docs/others/product-usage/readme.md)
