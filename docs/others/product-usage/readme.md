@@ -73,8 +73,6 @@ You’ll be greeted with an interface designed for quick experimentation.
 
 ![Results Panel](./images/pg-results-panel-tour-step.png)
 
-![Results Panel](./images/pg-results-panel.png)
-
 - Toggle between views using the `Switch View` icon in the Results panel header.
 
 ![Switch Results View table view](./images/pg-switch-results-view-tbl.png)
@@ -84,11 +82,9 @@ You’ll be greeted with an interface designed for quick experimentation.
 ### Share Query
 
 - Click the Share button to generate a shareable link for your current query.
-- You can modify the query before sharing.
+- You can also modify the query before sharing.
 
 ![Share Query](./images/pg-share-query-tour-step.png)
-
-Note: You can also modify the query before sharing it with others.
 
 ### Reset Query
 
