@@ -13,6 +13,7 @@ enum DATA_SOURCE_ID {
   BIKE_DS = "BIKE_DS",
   BICYCLE_DS = "BICYCLE_DS",
   TEST_JSON_ARR_DS = "TEST_JSON_ARR_DS",
+  STS_DEV_DS = "STS_DEV_DS",
 }
 enum DB_INDEX_ID {
   FASHION_DS_SEARCH_INDEX = "FASHION_DS_SEARCH_INDEX",
@@ -24,6 +25,7 @@ enum DB_INDEX_ID {
 enum DATA_TYPES {
   HASH = "HASH",
   JSON = "JSON",
+  VECTOR_SETS = "VECTOR_SETS",
 
   VECTOR_FIELD = "VECTOR",
   TAG_FIELD = "TAG",
@@ -267,6 +269,15 @@ const DATA_SOURCES: IDataSource[] = [
     keyPrefix: `${REDIS_KEYS.PREFIX.APP}bicycle:`,
     //jsFunctionString: "",
     dataType: DATA_TYPES.JSON,
+  },
+  {
+    dataSourceId: DATA_SOURCE_ID.STS_DEV_DS,
+    uploadType: UPLOAD_TYPES_FOR_IMPORT.REDIS_COMMANDS_FILE,
+    uploadPath: "data/data-sources/sts-dev-ds/sts-dev-data.redis",
+    //idField: "",
+    keyPrefix: `${REDIS_KEYS.PREFIX.APP}sts:`,
+    //jsFunctionString: "",
+    dataType: DATA_TYPES.VECTOR_SETS,
   },
 ];
 
