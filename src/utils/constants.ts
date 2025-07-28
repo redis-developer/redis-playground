@@ -315,6 +315,11 @@ const REDIS_WRITE_COMMANDS: IRedisCommandPattern[] = [
   { command: "FT.SUGGET", category: "search" },
   { command: "FT.AGGREGATE", category: "search" },
 
+  //Redis Vector Sets commands
+  //{ command: "VADD", category: "vectorSets", canDbInsert: true },
+  //{ command: "VREM", category: "vectorSets" },
+  //{ command: "VSETATTR", category: "vectorSets" },
+
   // TimeSeries module commands
   { command: "TS.ADD", category: "timeseries", canDbInsert: true },
   {
@@ -367,6 +372,16 @@ const REDIS_READ_COMMANDS: IRedisCommandPattern[] = [
     matchPatternToStop: ["$", /^\$/],
   },
   { command: "JSON.RESP", category: "json" },
+
+  //Redis Vector Sets commands
+  { command: "VCARD", category: "vectorSets" },
+  { command: "VDIM", category: "vectorSets" },
+  { command: "VEMB", category: "vectorSets" },
+  { command: "VGETATTR", category: "vectorSets" },
+  { command: "VINFO", category: "vectorSets" },
+  { command: "VLINKS", category: "vectorSets" },
+  { command: "VRANDMEMBER", category: "vectorSets" },
+  { command: "VSIM", category: "vectorSets" },
 
   // Redis Core read commands
   { command: "GET", category: "core" },

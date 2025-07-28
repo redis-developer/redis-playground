@@ -275,7 +275,7 @@ const DATA_SOURCES: IDataSource[] = [
     uploadType: UPLOAD_TYPES_FOR_IMPORT.REDIS_COMMANDS_FILE,
     uploadPath: "data/data-sources/sts-dev-ds/sts-dev-data.redis",
     //idField: "",
-    keyPrefix: `${REDIS_KEYS.PREFIX.APP}sts:`,
+    keyPrefix: `${REDIS_KEYS.PREFIX.APP}sts`, //its key in vector sets (not prefix)
     //jsFunctionString: "",
     dataType: DATA_TYPES.VECTOR_SETS,
   },

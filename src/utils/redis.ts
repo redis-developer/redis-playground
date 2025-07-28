@@ -214,6 +214,46 @@ class RedisWrapper {
     return result;
   }
 
+  public async vsGetElmAttrs(_key: string, _elementIds: string[]) {
+    const elements: any[] = [];
+    if (_key && _elementIds?.length) {
+      for (const elementId of _elementIds) {
+        let result = await this.rawCommandExecute(
+          `VGETATTR "${_key}" "${elementId}"`
+        );
+
+        try {
+          if (typeof result === "string") {
+            result = JSON.parse(result);
+          }
+        } catch (err) {
+          //LoggerCls.info("Error in vsGetElmAttrs", err);
+        }
+        elements.push(result);
+      }
+    }
+    return elements;
+  }
+
+  public async vsGetRandomElementIds(_key: string, _count: number) {
+    let result: any;
+    if (_key && _count) {
+      result = await this.rawCommandExecute(`VRANDMEMBER "${_key}" ${_count}`);
+    }
+    return result;
+  }
+
+  public async vsGetRandomElements(_key: string, _count: number) {
+    let elements: any[] = [];
+    if (_key && _count) {
+      const elementIds = await this.vsGetRandomElementIds(_key, _count);
+      if (elementIds && Array.isArray(elementIds)) {
+        elements = await this.vsGetElmAttrs(_key, elementIds as string[]);
+      }
+    }
+    return elements;
+  }
+
   public async rawCommandExecute(
     _command: string,
     _skipCmdCheck: boolean = false

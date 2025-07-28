@@ -27,6 +27,8 @@ import * as VECTORS_KNN_QUERY2 from "./vectors/knn/query2.js";
 import * as VECTORS_KNN_QUERY3 from "./vectors/knn/query3.js";
 import * as VECTORS_HYBRID_QUERY1 from "./vectors/hybrid/query1.js";
 
+import * as VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES from "./vector-sets/ele-similarity/with-scores.js";
+
 import { getFilteredDbIndexes } from "../../config.js";
 
 const queryIdDataMap = {
@@ -50,6 +52,7 @@ const queryIdDataMap = {
   VECTORS_KNN_QUERY2,
   VECTORS_KNN_QUERY3,
   VECTORS_HYBRID_QUERY1,
+  VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES,
 };
 type QueryIdType = keyof typeof queryIdDataMap;
 
@@ -189,6 +192,17 @@ const queryNavbarData = [
         label: "Hybrid Query",
         description:
           "Run a vector search for 'Female specific mountain bike' for bikes type 'Mountain bikes' and with price between $3500 and $3500",
+      },
+    ],
+  },
+  {
+    category: "Vector Sets",
+    categoryId: "VECTOR_SETS",
+    items: [
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES",
+        label: "Element Similarity With Scores",
+        description: "Find all sentences similar to an existing sentence 's4'",
       },
     ],
   },
