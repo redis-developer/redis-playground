@@ -90,6 +90,14 @@ const pgGetSampleDataByDataSourceId = async (
         values = await redisWrapperST.jsonMGet(keys);
       } else if (dataType === DATA_TYPES.HASH) {
         values = await redisWrapperST.hashMGet(keys);
+      } else if (dataType === DATA_TYPES.VECTOR_SETS) {
+        if (keys?.length === 1) {
+          const vectorSetKey = keys[0];
+          values = await redisWrapperST.vsGetRandomElements(
+            vectorSetKey,
+            dataCount
+          );
+        }
       }
 
       if (values?.length) {

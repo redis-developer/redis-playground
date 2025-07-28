@@ -5,8 +5,8 @@ import {
 } from "../../../../config.js";
 
 const queryViewData: IQueryViewData = {
-  query: "",
-  queryFile: "VSIM 'sts' ELE 's4' WITHSCORES",
+  query: "VSIM '{keyPrefix}' ELE 's4' WITHSCORES",
+  queryFile: "",
   dbIndexId: "",
   dataSourceId: DATA_SOURCE_ID.STS_DEV_DS,
 };

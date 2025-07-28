@@ -29,7 +29,12 @@ import * as VECTORS_HYBRID_QUERY1 from "./vectors/hybrid/query1.js";
 
 import * as VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES from "./vector-sets/ele-similarity/with-scores.js";
 
-import { getFilteredDbIndexes } from "../../config.js";
+import {
+  DATA_SOURCE_ID,
+  DB_INDEX_ID,
+  getFilteredDataSources,
+  getFilteredDbIndexes,
+} from "../../config.js";
 
 const queryIdDataMap = {
   JSON_GENERAL_MULTI_FIELD_AND_CONDITION,
@@ -209,23 +214,50 @@ const queryNavbarData = [
 ];
 
 const getQueryDataById = (queryId: QueryIdType) => {
-  const retObj: any = queryIdDataMap[queryId].default;
+  const retObj = queryIdDataMap[queryId].default;
   retObj.queryId = queryId;
+  let keyPrefix = "";
+  let dbIndexName = "";
 
-  const dbIndexes = getFilteredDbIndexes([retObj.dbIndexId]);
-  if (dbIndexes.length > 0) {
-    const dbIndexName = dbIndexes[0].dbIndexName;
-    let query = retObj.query;
+  if (retObj.dbIndexId) {
+    const dbIndexes = getFilteredDbIndexes([retObj.dbIndexId as DB_INDEX_ID]);
+    if (dbIndexes.length > 0) {
+      dbIndexName = dbIndexes[0].dbIndexName;
+      keyPrefix = dbIndexes[0].keyPrefix;
+      let query = retObj.query;
 
-    if (!query && retObj.queryFile) {
-      query = fs.readFileSync(
-        socketState.APP_ROOT_DIR + retObj.queryFile,
-        "binary"
-      );
+      if (!query && retObj.queryFile) {
+        query = fs.readFileSync(
+          socketState.APP_ROOT_DIR + retObj.queryFile,
+          "binary"
+        );
+      }
+
+      if (dbIndexName) {
+        query = query.replace("{dbIndexName}", dbIndexName);
+      }
+      if (keyPrefix) {
+        query = query.replace("{keyPrefix}", keyPrefix);
+      }
+      retObj.query = query;
     }
+  }
 
-    query = query.replace("{dbIndexName}", dbIndexName);
-    retObj.query = query;
+  if (!keyPrefix && retObj.query.includes("{keyPrefix}")) {
+    // like vector set queries
+    let filteredDataSources = getFilteredDataSources(
+      [retObj.dataSourceId as DATA_SOURCE_ID],
+      false,
+      ""
+    );
+    if (filteredDataSources.length > 0) {
+      const dataSource = filteredDataSources[0];
+      keyPrefix = dataSource.keyPrefix || "";
+
+      if (keyPrefix) {
+        retObj.query = retObj.query.replace("{keyPrefix}", keyPrefix);
+      }
+    }
   }
 
   return retObj;
