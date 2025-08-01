@@ -223,8 +223,10 @@ class RedisWrapper {
         );
 
         try {
-          if (typeof result === "string") {
+          if (result && typeof result === "string") {
             result = JSON.parse(result);
+            //@ts-ignore
+            result.elementId = elementId;
           }
         } catch (err) {
           //LoggerCls.info("Error in vsGetElmAttrs", err);

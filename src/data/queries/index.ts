@@ -213,47 +213,47 @@ const queryNavbarData = [
     ],
   },
   {
-    category: "VectorSets (ELE)",
+    category: "VectorSets ELE Similarity",
     categoryId: "VECTOR_SETS_ELE_SIMILARITY",
     items: [
       {
         queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES",
-        label: "Element Similarity With Scores",
+        label: "With Scores",
         description: "Retrieve elements similar to an existing element 's4'",
       },
       {
         queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES_AND_COUNT",
-        label: "Element Similarity With Scores And Count",
+        label: "With Scores And Count",
         description:
           "Retrieve elements similar to an existing element 's4' and limit the results to 5",
       },
       {
         queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR",
-        label: "Element Similarity With Logical Operator",
+        label: "Filter By Logical Operator",
         description:
           "Retrieve elements similar to an existing element 's4' and filter the results by word count",
       },
       {
         queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR",
-        label: "Element Similarity With Comparison Operator",
+        label: "Filter By Comparison Operator",
         description:
           "Retrieve elements similar to an existing element 's4' and filter the results by activity type",
       },
       {
         queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR",
-        label: "Element Similarity With Containment Operator",
+        label: "Filter By Containment Operator",
         description:
           "Retrieve elements similar to an existing element 's4' and filter the results by matching activity types",
       },
       {
         queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR",
-        label: "Element Similarity With Arithmetic Operator",
+        label: "Filter By Arithmetic Operator",
         description:
           "Retrieve elements similar to an existing element 's4' and filter the results by even word count",
       },
       {
         queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING",
-        label: "Element Similarity With Grouping",
+        label: "Filter Grouping",
         description:
           "Retrieve elements similar to an existing element 's4' , filter the results to include only those with an even word count and a combined word and character count greater than 30",
       },
