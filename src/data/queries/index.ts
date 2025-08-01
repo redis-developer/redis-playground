@@ -28,6 +28,12 @@ import * as VECTORS_KNN_QUERY3 from "./vectors/knn/query3.js";
 import * as VECTORS_HYBRID_QUERY1 from "./vectors/hybrid/query1.js";
 
 import * as VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES from "./vector-sets/ele-similarity/with-scores.js";
+import * as VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES_AND_COUNT from "./vector-sets/ele-similarity/with-scores-and-count.js";
+import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR from "./vector-sets/ele-similarity/filter-by-logical-operator.js";
+import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR from "./vector-sets/ele-similarity/filter-by-comparison-operator.js";
+import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR from "./vector-sets/ele-similarity/filter-by-containment-operator.js";
+import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR from "./vector-sets/ele-similarity/filter-by-arithmetic-operator.js";
+import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING from "./vector-sets/ele-similarity/filter-grouping.js";
 
 import {
   DATA_SOURCE_ID,
@@ -58,6 +64,12 @@ const queryIdDataMap = {
   VECTORS_KNN_QUERY3,
   VECTORS_HYBRID_QUERY1,
   VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES,
+  VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES_AND_COUNT,
+  VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR,
+  VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR,
+  VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR,
+  VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR,
+  VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING,
 };
 type QueryIdType = keyof typeof queryIdDataMap;
 
@@ -149,7 +161,7 @@ const queryNavbarData = [
     items: [
       {
         queryId: "JSON_AGGREGATE_SIMPLE_MAPPING",
-        label: "New field using APPLY",
+        label: "New field Using APPLY",
         description: "Creating a new field using APPLY",
       },
       {
@@ -201,13 +213,49 @@ const queryNavbarData = [
     ],
   },
   {
-    category: "Vector Sets",
-    categoryId: "VECTOR_SETS",
+    category: "VectorSets (ELE)",
+    categoryId: "VECTOR_SETS_ELE_SIMILARITY",
     items: [
       {
         queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES",
         label: "Element Similarity With Scores",
-        description: "Find all sentences similar to an existing sentence 's4'",
+        description: "Retrieve elements similar to an existing element 's4'",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES_AND_COUNT",
+        label: "Element Similarity With Scores And Count",
+        description:
+          "Retrieve elements similar to an existing element 's4' and limit the results to 5",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR",
+        label: "Element Similarity With Logical Operator",
+        description:
+          "Retrieve elements similar to an existing element 's4' and filter the results by word count",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR",
+        label: "Element Similarity With Comparison Operator",
+        description:
+          "Retrieve elements similar to an existing element 's4' and filter the results by activity type",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR",
+        label: "Element Similarity With Containment Operator",
+        description:
+          "Retrieve elements similar to an existing element 's4' and filter the results by matching activity types",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR",
+        label: "Element Similarity With Arithmetic Operator",
+        description:
+          "Retrieve elements similar to an existing element 's4' and filter the results by even word count",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING",
+        label: "Element Similarity With Grouping",
+        description:
+          "Retrieve elements similar to an existing element 's4' , filter the results to include only those with an even word count and a combined word and character count greater than 30",
       },
     ],
   },
