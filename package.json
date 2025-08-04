@@ -21,6 +21,8 @@
     "nodemon": "^3.1.7"
   },
   "dependencies": {
+    "@langchain/core": "^0.3.66",
+    "@langchain/openai": "^0.6.3",
     "@types/express": "^5.0.0",
     "@types/fs-extra": "^11.0.4",
     "@types/hpp": "^0.2.6",

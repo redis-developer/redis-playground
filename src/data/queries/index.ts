@@ -35,6 +35,8 @@ import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR from "./ve
 import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR from "./vector-sets/ele-similarity/filter-by-arithmetic-operator.js";
 import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING from "./vector-sets/ele-similarity/filter-grouping.js";
 
+import * as VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES from "./vector-sets/value-similarity/with-scores.js";
+
 import {
   DATA_SOURCE_ID,
   DB_INDEX_ID,
@@ -70,6 +72,7 @@ const queryIdDataMap = {
   VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR,
   VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR,
   VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING,
+  VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES,
 };
 type QueryIdType = keyof typeof queryIdDataMap;
 
@@ -259,6 +262,18 @@ const queryNavbarData = [
       },
     ],
   },
+  {
+    category: "VectorSets Value Similarity",
+    categoryId: "VECTOR_SETS_VALUE_SIMILARITY",
+    items: [
+      {
+        queryId: "VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES",
+        label: "With Scores",
+        description:
+          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar'",
+      },
+    ],
+  },
 ];
 
 const getQueryDataById = (queryId: QueryIdType) => {
@@ -282,17 +297,17 @@ const getQueryDataById = (queryId: QueryIdType) => {
       }
 
       if (dbIndexName) {
-        query = query.replace("{dbIndexName}", dbIndexName);
+        query = query.replace(/{dbIndexName}/g, dbIndexName);
       }
       if (keyPrefix) {
-        query = query.replace("{keyPrefix}", keyPrefix);
+        query = query.replace(/{keyPrefix}/g, keyPrefix);
       }
       retObj.query = query;
     }
   }
 
   if (!keyPrefix && retObj.query.includes("{keyPrefix}")) {
-    // like vector set queries
+    // like vector set queries without dbIndexId
     let filteredDataSources = getFilteredDataSources(
       [retObj.dataSourceId as DATA_SOURCE_ID],
       false,
@@ -303,7 +318,7 @@ const getQueryDataById = (queryId: QueryIdType) => {
       keyPrefix = dataSource.keyPrefix || "";
 
       if (keyPrefix) {
-        retObj.query = retObj.query.replace("{keyPrefix}", keyPrefix);
+        retObj.query = retObj.query.replace(/{keyPrefix}/g, keyPrefix);
       }
     }
   }

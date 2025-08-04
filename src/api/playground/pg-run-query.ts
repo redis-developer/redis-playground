@@ -15,6 +15,39 @@ import {
 } from "./new-user-data/user-data-config.js";
 import { pgResetUserDataExpiry } from "./new-user-data/pg-reset-user-data-expiry.js";
 import { pgGetNewUserId } from "./new-user-data/pg-get-new-user-id.js";
+import { convertTextToEmbeddings } from "../../utils/embeddings.js";
+
+const replaceEmbedPlaceholder = async (query: string) => {
+  let replacedQuery = query;
+
+  if (query) {
+    /* 
+     Query : 
+       VSIM 'pg:sts' $embed("She is playing a guitar") WITHSCORES WITHATTRIBS
+     Replaced query : 
+       VSIM 'pg:sts' VALUES 1536 0.000534 0.034054 ... WITHSCORES WITHATTRIBS
+    */
+
+    // Find $embed("...") pattern in the query (single occurrence)
+    const embedPattern = /\$embed\("([^"]+)"\)/;
+    const match = query.match(embedPattern);
+
+    if (match && match.length > 1) {
+      // match[0] = '$embed("She is playing a guitar")'
+      // match[1] = 'She is playing a guitar'
+      const embedPlaceholder = match[0];
+      const embedText = match[1];
+
+      const embeddings = await convertTextToEmbeddings(embedText);
+      replacedQuery = query.replace(
+        embedPlaceholder,
+        `VALUES ${embeddings.length} ${embeddings.join(" ")}`
+      );
+    }
+  }
+
+  return replacedQuery;
+};
 
 const pgRunQuery = async (
   input: z.infer<typeof InputSchemas.pgRunQuerySchema>
@@ -81,6 +114,8 @@ const pgRunQuery = async (
   let result: any = {};
 
   if (runQuery) {
+    runQuery = await replaceEmbedPlaceholder(runQuery);
+
     if (genUserId) {
       runQuery = replaceKeyPrefixInQuery(runQuery, genUserId);
     }
