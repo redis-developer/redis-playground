@@ -325,7 +325,7 @@ const queryNavbarData = [
       },
     ],
   },
-  ...vectorSetsNavBarData,
+  //...vectorSetsNavBarData,
 ];
 
 const getQueryDataById = (queryId: QueryIdType) => {
