@@ -36,6 +36,12 @@ import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR from "./vec
 import * as VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING from "./vector-sets/ele-similarity/filter-grouping.js";
 
 import * as VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES from "./vector-sets/value-similarity/with-scores.js";
+import * as VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES_AND_COUNT from "./vector-sets/value-similarity/with-scores-and-count.js";
+import * as VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR from "./vector-sets/value-similarity/filter-by-logical-operator.js";
+import * as VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR from "./vector-sets/value-similarity/filter-by-comparison-operator.js";
+import * as VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR from "./vector-sets/value-similarity/filter-by-containment-operator.js";
+import * as VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR from "./vector-sets/value-similarity/filter-by-arithmetic-operator.js";
+import * as VECTOR_SETS_VALUE_SIMILARITY_FILTER_GROUPING from "./vector-sets/value-similarity/filter-grouping.js";
 
 import {
   DATA_SOURCE_ID,
@@ -73,8 +79,112 @@ const queryIdDataMap = {
   VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR,
   VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING,
   VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES,
+  VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES_AND_COUNT,
+  VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR,
+  VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR,
+  VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR,
+  VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR,
+  VECTOR_SETS_VALUE_SIMILARITY_FILTER_GROUPING,
 };
 type QueryIdType = keyof typeof queryIdDataMap;
+
+const vectorSetsNavBarData = [
+  {
+    category: "VectorSets ELE Similarity",
+    categoryId: "VECTOR_SETS_ELE_SIMILARITY",
+    items: [
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES",
+        label: "With Scores",
+        description: "Retrieve elements similar to an existing element 's4'",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES_AND_COUNT",
+        label: "With Scores And Count",
+        description:
+          "Retrieve elements similar to an existing element 's4' and limit the results to 5",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR",
+        label: "Filter By Logical Operator",
+        description:
+          "Retrieve elements similar to an existing element 's4' and filter the results by word count",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR",
+        label: "Filter By Comparison Operator",
+        description:
+          "Retrieve elements similar to an existing element 's4' and filter the results by activity type",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR",
+        label: "Filter By Containment Operator",
+        description:
+          "Retrieve elements similar to an existing element 's4' and filter the results by matching activity types",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR",
+        label: "Filter By Arithmetic Operator",
+        description:
+          "Retrieve elements similar to an existing element 's4' and filter the results by even word count",
+      },
+      {
+        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING",
+        label: "Filter Grouping",
+        description:
+          "Retrieve elements similar to an existing element 's4' , filter the results to include only those with an even word count and a combined word and character count greater than 30",
+      },
+    ],
+  },
+  {
+    category: "VectorSets Value Similarity",
+    categoryId: "VECTOR_SETS_VALUE_SIMILARITY",
+    items: [
+      {
+        queryId: "VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES",
+        label: "With Scores",
+        description:
+          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar'",
+      },
+      {
+        queryId: "VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES_AND_COUNT",
+        label: "With Scores And Count",
+        description:
+          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar' and limit the results to 5",
+      },
+      {
+        queryId: "VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR",
+        label: "Filter By Logical Operator",
+        description:
+          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar' and filter the results by word count",
+      },
+      {
+        queryId: "VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR",
+        label: "Filter By Comparison Operator",
+        description:
+          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar' and filter the results by activity type",
+      },
+      {
+        queryId: "VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR",
+        label: "Filter By Containment Operator",
+        description:
+          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar' and filter the results by matching activity types",
+      },
+      {
+        queryId: "VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR",
+        label: "Filter By Arithmetic Operator",
+        description:
+          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar' and filter the results by even word count",
+      },
+      {
+        queryId: "VECTOR_SETS_VALUE_SIMILARITY_FILTER_GROUPING",
+        label: "Filter Grouping",
+        description:
+          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar' , filter the results to include only those with an even word count and a combined word and character count greater than 30",
+      },
+    ],
+  },
+];
 
 const queryNavbarData = [
   {
@@ -215,65 +325,7 @@ const queryNavbarData = [
       },
     ],
   },
-  {
-    category: "VectorSets ELE Similarity",
-    categoryId: "VECTOR_SETS_ELE_SIMILARITY",
-    items: [
-      {
-        queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES",
-        label: "With Scores",
-        description: "Retrieve elements similar to an existing element 's4'",
-      },
-      {
-        queryId: "VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES_AND_COUNT",
-        label: "With Scores And Count",
-        description:
-          "Retrieve elements similar to an existing element 's4' and limit the results to 5",
-      },
-      {
-        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_LOGICAL_OPERATOR",
-        label: "Filter By Logical Operator",
-        description:
-          "Retrieve elements similar to an existing element 's4' and filter the results by word count",
-      },
-      {
-        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_COMPARISON_OPERATOR",
-        label: "Filter By Comparison Operator",
-        description:
-          "Retrieve elements similar to an existing element 's4' and filter the results by activity type",
-      },
-      {
-        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR",
-        label: "Filter By Containment Operator",
-        description:
-          "Retrieve elements similar to an existing element 's4' and filter the results by matching activity types",
-      },
-      {
-        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR",
-        label: "Filter By Arithmetic Operator",
-        description:
-          "Retrieve elements similar to an existing element 's4' and filter the results by even word count",
-      },
-      {
-        queryId: "VECTOR_SETS_ELE_SIMILARITY_FILTER_GROUPING",
-        label: "Filter Grouping",
-        description:
-          "Retrieve elements similar to an existing element 's4' , filter the results to include only those with an even word count and a combined word and character count greater than 30",
-      },
-    ],
-  },
-  {
-    category: "VectorSets Value Similarity",
-    categoryId: "VECTOR_SETS_VALUE_SIMILARITY",
-    items: [
-      {
-        queryId: "VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES",
-        label: "With Scores",
-        description:
-          "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar'",
-      },
-    ],
-  },
+  ...vectorSetsNavBarData,
 ];
 
 const getQueryDataById = (queryId: QueryIdType) => {

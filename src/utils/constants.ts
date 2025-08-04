@@ -408,6 +408,11 @@ const REDIS_ALLOWED_COMMANDS = [
   ...REDIS_READ_COMMANDS,
 ];
 
+const QUERY_COMMENTS = {
+  VECTOR_SETS_VALUE_SIMILARITY: `// Note: The $embed(...) placeholder is sandbox utility that automatically injects the text's vector embedding.
+// Example of the original query with the replaced vector values:`,
+};
+
 type DisableJsFlagsType = {
   [key in keyof typeof DISABLE_JS_FLAGS]: boolean;
 };
@@ -429,6 +434,7 @@ export {
   USER_DATA_STATUS,
   REDIS_WRITE_COMMANDS,
   REDIS_READ_COMMANDS,
+  QUERY_COMMENTS,
 };
 
 export type { DisableJsFlagsType, IRedisCommandPattern };
