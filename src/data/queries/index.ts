@@ -43,6 +43,15 @@ import * as VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR from "./
 import * as VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR from "./vector-sets/value-similarity/filter-by-arithmetic-operator.js";
 import * as VECTOR_SETS_VALUE_SIMILARITY_FILTER_GROUPING from "./vector-sets/value-similarity/filter-grouping.js";
 
+import * as VECTOR_SETS_INSIGHTS_VCARD from "./vector-sets/insights/vcard.js";
+import * as VECTOR_SETS_INSIGHTS_VDIM from "./vector-sets/insights/vdim.js";
+import * as VECTOR_SETS_INSIGHTS_VEMB from "./vector-sets/insights/vemb.js";
+import * as VECTOR_SETS_INSIGHTS_VGETATTR from "./vector-sets/insights/vgetattr.js";
+import * as VECTOR_SETS_INSIGHTS_VINFO from "./vector-sets/insights/vinfo.js";
+import * as VECTOR_SETS_INSIGHTS_VISMEMBER from "./vector-sets/insights/vismember.js";
+import * as VECTOR_SETS_INSIGHTS_VLINKS from "./vector-sets/insights/vlinks.js";
+import * as VECTOR_SETS_INSIGHTS_VRANDMEMBER from "./vector-sets/insights/vrandmember.js";
+
 import {
   DATA_SOURCE_ID,
   DB_INDEX_ID,
@@ -85,6 +94,14 @@ const queryIdDataMap = {
   VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_CONTAINMENT_OPERATOR,
   VECTOR_SETS_VALUE_SIMILARITY_FILTER_BY_ARITHMETIC_OPERATOR,
   VECTOR_SETS_VALUE_SIMILARITY_FILTER_GROUPING,
+  VECTOR_SETS_INSIGHTS_VCARD,
+  VECTOR_SETS_INSIGHTS_VDIM,
+  VECTOR_SETS_INSIGHTS_VEMB,
+  VECTOR_SETS_INSIGHTS_VGETATTR,
+  VECTOR_SETS_INSIGHTS_VINFO,
+  VECTOR_SETS_INSIGHTS_VISMEMBER,
+  VECTOR_SETS_INSIGHTS_VLINKS,
+  VECTOR_SETS_INSIGHTS_VRANDMEMBER,
 };
 type QueryIdType = keyof typeof queryIdDataMap;
 
@@ -181,6 +198,56 @@ const vectorSetsNavBarData = [
         label: "Filter Grouping",
         description:
           "Retrieve elements with embedding values similar to the phrase 'She is playing a guitar' , filter the results to include only those with an even word count and a combined word and character count greater than 30",
+      },
+    ],
+  },
+  {
+    category: "VectorSets Insights",
+    categoryId: "VECTOR_SETS_INSIGHTS",
+    items: [
+      {
+        queryId: "VECTOR_SETS_INSIGHTS_VCARD",
+        label: "VCARD",
+        description: "Retrieve number of elements in the vector set",
+      },
+      {
+        queryId: "VECTOR_SETS_INSIGHTS_VDIM",
+        label: "VDIM",
+        description:
+          "Retrieve number of dimensions of the vectors in the vector set",
+      },
+      {
+        queryId: "VECTOR_SETS_INSIGHTS_VEMB",
+        label: "VEMB",
+        description:
+          "Retrieve the approximate vector associated with a given element in the vector set",
+      },
+      {
+        queryId: "VECTOR_SETS_INSIGHTS_VGETATTR",
+        label: "VGETATTR",
+        description:
+          "Retrieve the JSON attributes associated with an element in a vector set",
+      },
+      {
+        queryId: "VECTOR_SETS_INSIGHTS_VINFO",
+        label: "VINFO",
+        description: "Retrieve information about the vector set",
+      },
+      {
+        queryId: "VECTOR_SETS_INSIGHTS_VISMEMBER",
+        label: "VISMEMBER",
+        description: "Check if an element exists in a vector set",
+      },
+      {
+        queryId: "VECTOR_SETS_INSIGHTS_VLINKS",
+        label: "VLINKS",
+        description:
+          "Retrieve the neighbors of a specified element in a vector set",
+      },
+      {
+        queryId: "VECTOR_SETS_INSIGHTS_VRANDMEMBER",
+        label: "VRANDMEMBER",
+        description: "Retrieve one or more random elements from a vector set",
       },
     ],
   },
@@ -325,7 +392,7 @@ const queryNavbarData = [
       },
     ],
   },
-  //...vectorSetsNavBarData,
+  ...vectorSetsNavBarData,
 ];
 
 const getQueryDataById = (queryId: QueryIdType) => {

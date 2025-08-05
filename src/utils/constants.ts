@@ -381,6 +381,7 @@ const REDIS_READ_COMMANDS: IRedisCommandPattern[] = [
   { command: "VINFO", category: "vectorSets" },
   { command: "VLINKS", category: "vectorSets" },
   { command: "VRANDMEMBER", category: "vectorSets" },
+  { command: "VISMEMBER", category: "vectorSets" },
   { command: "VSIM", category: "vectorSets" },
 
   // Redis Core read commands
