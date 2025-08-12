@@ -7,54 +7,49 @@ However, instead of associating each element with a numerical score, elements in
 
 This makes Vector Sets ideal for **similarity search** tasks such as:
 
-- Retrieving the most similar items to a **specified vector** (e.g., a new embedding not yet in the set).
 - Retrieving the most similar items to the **vector of an existing element** already in the set.
+- Retrieving the most similar items to a **specified vector** (e.g., a new embedding not yet in the set).
 
 With these capabilities, Vector Sets are useful in semantic search, recommendation systems, face recognition, and other applications where vector similarity is important.
 
-## Visual Representation
+**Visual Representation**
 
-A vector set is a collection of elements, each associated with a vector and a set of attributes.
+A Vector Set is a collection of elements, each associated with a vector and optional custom attributes.
 
 ```
-Vector Set: “pg:sts”
-├── Element ID: “s1”
+Vector Set: "pg:sts"
+├── Element ID: "s1"
 │     ├── Vector: [-0.010130, -0.026101, …] (1536 dimensions)
 │     └── Attributes:
 │          {
-│            “sentence”: “A young child is riding a horse.”,
-│            “activityType”: “people”,
-│            “wordCount”: 7,
-│            “charCount”: 32
+│            "sentence": "A young child is riding a horse.",
+│            "activityType": "people",
+│            "wordCount": 7,
+│            "charCount": 32
 │          }
-├── Element ID: “s2”
+├── Element ID: "s2"
 │     ├── Vector: [-0.011102, -0.034598, …]
-│     └── Attributes: {…}
+│     └── Attributes: {...}
 └── …
 ```
 
-In above representation:
+In this representation:
 
-- **VectorSet key** → `"pg:sts"`
-- **Element ID** → Sentences identified by `"s1"`, `"s2"`, etc.
+- **Vector Set key** → `"pg:sts"`
+- **Element IDs** → Sentences identified by `"s1"`, `"s2"`, etc., each storing a vector and custom attributes required for future filtering or inspection.
 
 ## Adding Items to a Vector Set
 
-You can add items to a Vector Set using the [`VADD`](https://redis.io/docs/latest/commands/vadd/) command.
+You can add items to a Vector Set using the [VADD](https://redis.io/docs/latest/commands/vadd/) command.
 
-### VADD command
+### VADD
 
 ```sh
 # Syntax
 VADD {vectorSetKey} VALUES {embeddingDimension} {embeddingValues...} {elementId} SETATTR {elementAttributesAsJSON}
 ```
 
-```sh
-# Example
-VADD "pg:sts" VALUES 1536 -0.010130 -0.026101 ... "s1" SETATTR '{"sentence":"A young child is riding a horse.","activityType":"people","wordCount":7,"charCount":32}'
-```
-
-Where:
+**Parameters:**
 
 - {vectorSetKey} – The name of your Vector Set.
 - {embeddingDimension} – The length of the vector (number of dimensions).
@@ -62,43 +57,54 @@ Where:
 - {elementId} – A unique identifier for this element in the set.
 - {elementAttributesAsJSON} – A JSON object containing any metadata about the element, making it easy to filter or inspect later.
 
-### Bulk Data Import
+```sh
+# Example
+VADD "pg:sts" VALUES 1536 -0.010130 -0.026101 ... "s1" SETATTR '{"sentence":"A young child is riding a horse.","activityType":"people","wordCount":7,"charCount":32}'
+```
 
-The full Semantic Textual Similarity (STS) Development Set is [available here](https://github.com/redis-developer/redis-datasets/blob/master/core/vectorsets/sts-dev-ds/sts-dev-open-ai.redis)
+### Bulk Data Import (Optional)
 
-Upload the file into [Redis insight](https://redis.io/insight/)
+The full **Semantic Textual Similarity (STS) Development Set** used in this tutorial is [available here](https://github.com/redis-developer/redis-datasets/blob/master/core/vectorsets/sts-dev-ds/sts-dev-open-ai.redis).
+
+Upload that file into [Redis Insight](https://redis.io/insight/):
+
+- Click `Bulk Actions` -> choose `Upload Data` tab -> Upload the file and click `Upload`
 
 ![bulk-action-upload-file](./images/bulk-action-upload-file.png)
+
+- Post upload, you can see the status of the upload data
+
 ![bulk-action-post-upload](./images/bulk-action-post-upload.png)
 
 ## Similarity Search with Existing Elements
 
-The [`VSIM`](https://redis.io/docs/latest/commands/vsim/) command allows you to find elements in a Vector Set that are most similar to the vector of an **existing element** in the same set.
+The [VSIM](https://redis.io/docs/latest/commands/vsim/) command allows you to find elements in a Vector Set that are most similar to the vector of an **existing element** in the same set.
 
 This is useful when you already have an element in your dataset and want to find others that are semantically or visually close to it.
 
-### Syntax
+### VSIM
 
 ```sh
 VSIM {vectorSetKey} ELE {elementId} WITHSCORES WITHATTRIBS
 ```
 
-Where:
+**Parameters:**
 
 - {vectorSetKey} – The name of your Vector Set.
 - ELE {elementId} – The ID of the element whose vector you want to use for similarity search.
 - WITHSCORES – Returns the similarity score for each result.
 - WITHATTRIBS – Returns the stored attributes (metadata) for each result.
 
-### Example
+**Example**
 
 ```sh
 # Retrieve elements similar to existing element 's4' (Sentence 4)
 VSIM "pg:sts" ELE "s4" WITHSCORES WITHATTRIBS COUNT 5
 ```
 
-```sh
-# output
+**Output:**
+
+```json
 [
   "s4",
   "1",
@@ -118,7 +124,7 @@ VSIM "pg:sts" ELE "s4" WITHSCORES WITHATTRIBS COUNT 5
 ]
 ```
 
-- Visual Representation
+**Visual Representation:**
 
 ```
 Query: "Find items similar to element 's4'"
@@ -134,11 +140,9 @@ pg:sts
  └── s431  (score: 0.6881) → "The cat tried to eat the corn on the cob."
 ```
 
-### Try It in Redis Sandbox
+### Try in Redis Sandbox
 
-You can experiment with pre-seeded Vector Set data in the Redis Sandbox:
-
-- [Element Similarity queries](https://redis.io/try/sandbox?queryId=VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES&catId=VECTOR_SETS_ELE_SIMILARITY)
+You can experiment with [Element Similarity queries](https://redis.io/try/sandbox?queryId=VECTOR_SETS_ELE_SIMILARITY_WITH_SCORES&catId=VECTOR_SETS_ELE_SIMILARITY) in the Redis Sandbox:
 
 - Element similarity with scores and count example
   ![ele-similarity-scores](./images/ele-similarity-scores.png)
@@ -146,18 +150,18 @@ You can experiment with pre-seeded Vector Set data in the Redis Sandbox:
 - Element similarity with logical filter
   ![ele-similarity-logical-filter](./images/ele-similarity-logical-filter.png)
 
-Tip: In the Redis Playground, check the left sidebar for more filter options, including: Arithmetic filters, Comparison filters and Containment filters
+Tip: In the Redis Sandbox, explore additional filter options in the left sidebar, including arithmetic filters, comparison filters, and containment filters.
 
 ## Similarity Search with Specified Vectors
 
-The [`VSIM`](https://redis.io/docs/latest/commands/vsim/) command can also search for elements similar to a **vector you provide directly**, instead of using an existing element’s vector.
+The [VSIM](https://redis.io/docs/latest/commands/vsim/) command can also search for elements similar to a **vector you provide directly**, instead of using an existing element’s vector.
 
 This is useful when:
 
 - You have a **new piece of text, image, or audio** not in your dataset.
 - You have already generated its vector embeddings using the **same model and dimensions** used when seeding the Vector Set.
 
-### Syntax
+### VSIM
 
 ```sh
 VSIM {vectorSetKey} VALUES {embeddingDimension} {embeddingValues...} WITHSCORES WITHATTRIBS
@@ -171,7 +175,7 @@ Where:
 - WITHATTRIBS – Returns the stored attributes (metadata) for each result.
 - COUNT N (optional) – Limits the number of results returned.
 
-### Example
+**Example**
 
 ```sh
 # Retrieve the top 5 elements similar to the phrase "She is playing a guitar"
@@ -204,7 +208,7 @@ Note:
 ]
 ```
 
-- Visual Representation
+**Visual Representation**
 
 ```
 Query Vector: [0.000534, 0.034054, ...]  (1536 dimensions)
@@ -218,11 +222,9 @@ pg:sts
  └── s271  (score: 0.8623) → "A person is playing a guitar."
 ```
 
-### Try It in Redis Sandbox
+### Try in Redis Sandbox
 
-Experiment with pre-seeded Vector Set data:
-
-- [Value Similarity queries](https://redis.io/try/sandbox?queryId=VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES&catId=VECTOR_SETS_VALUE_SIMILARITY)
+Experiment with [Value Similarity queries](https://redis.io/try/sandbox?queryId=VECTOR_SETS_VALUE_SIMILARITY_WITH_SCORES&catId=VECTOR_SETS_VALUE_SIMILARITY) in the Redis Sandbox:
 
 Value similarity with scores and count example
 ![value-similarity-scores](./images/value-similarity-scores.png)
@@ -230,16 +232,27 @@ Value similarity with scores and count example
 Value similarity with logical filter
 ![value-similarity-logical-filter](./images/value-similarity-logical-filter.png)
 
-Tip: In the Redis Playground, explore additional filter options in the left sidebar, including: Arithmetic filters, Comparison filters and Containment filters
+Tip: In the Redis Sandbox, explore additional filter options in the left sidebar, including arithmetic filters, comparison filters, and containment filters.
 
 ## Other Vector Set Commands
 
 Vector Sets in Redis support several utility commands that let you inspect, debug, and retrieve metadata, attributes, or structure-related information.
 
-### VCARD
+- `VCARD` – Count elements.
+- `VDIM` – Get vector dimensions.
+- `VEMB` – Get vector for an element.
+- `VGETATTR` – Get attributes for an element.
+- `VINFO` – Get metadata about the Vector Set.
+- `VISMEMBER` – Check if an element exists.
+- `VLINKS` – Get neighbors in the HNSW graph.
+- `VRANDMEMBER` – Get random elements.
+
+### Commands
+
+**VCARD**
 
 ```sh
-##  Retrieve number of elements in the vector set
+#  Retrieve number of elements in the Vector Set
 VCARD 'pg:sts'
 ```
 
@@ -248,10 +261,10 @@ VCARD 'pg:sts'
 2898
 ```
 
-### VDIM
+**VDIM**
 
 ```sh
-# Retrieve number of dimensions of the vectors in the vector set
+# Retrieve number of dimensions of the vectors in the Vector Set
 VDIM 'pg:sts'
 ```
 
@@ -260,10 +273,10 @@ VDIM 'pg:sts'
 1536
 ```
 
-### VEMB
+**VEMB**
 
 ```sh
-#  Retrieve the approximate vector associated with a given element in the vector set.
+#  Retrieve the approximate vector associated with a given element in the Vector Set.
 VEMB 'pg:sts' 's4'
 ```
 
@@ -276,10 +289,10 @@ VEMB 'pg:sts' 's4'
 ]
 ```
 
-### VGETATTR
+**VGETATTR**
 
 ```sh
-# Retrieve the JSON attributes associated with an element in a vector set.
+# Retrieve the JSON attributes associated with an element in a Vector Set.
 VGETATTR 'pg:sts' 's4'
 ```
 
@@ -293,10 +306,10 @@ VGETATTR 'pg:sts' 's4'
 }
 ```
 
-### VINFO
+**VINFO**
 
 ```sh
-# Retrieve metadata and internal details about a vector set, including size, dimensions, quantization type, and graph structure.
+# Retrieve metadata and internal details about a Vector Set, including size, dimensions, quantization type, and graph structure.
 VINFO 'pg:sts'
 ```
 
@@ -324,10 +337,10 @@ VINFO 'pg:sts'
 ]
 ```
 
-### VISMEMBER
+**VISMEMBER**
 
 ```sh
-# Check if an element exists in a vector set.
+# Check if an element exists in a Vector Set.
 VISMEMBER 'pg:sts' 's4'
 ```
 
@@ -336,10 +349,10 @@ VISMEMBER 'pg:sts' 's4'
 1
 ```
 
-### VLINKS
+**VLINKS**
 
 ```sh
-# Retrieve the neighbors of a specified element in a vector set. The command shows the connections for each layer of the HNSW graph.
+# Retrieve the neighbors of a specified element in a Vector Set. The command shows the connections for each layer of the HNSW graph.
 VLINKS 'pg:sts' 's4' WITHSCORES
 ```
 
@@ -415,10 +428,10 @@ VLINKS 'pg:sts' 's4' WITHSCORES
 ]
 ```
 
-### VRANDMEMBER
+**VRANDMEMBER**
 
 ```sh
-# Retrieve one or more random elements from a vector set.
+# Retrieve one or more random elements from a Vector Set.
 VRANDMEMBER 'pg:sts' 5
 ```
 
@@ -433,15 +446,13 @@ VRANDMEMBER 'pg:sts' 5
 ]
 ```
 
-### Try it in Redis Sandbox
+### Try in Redis Sandbox
 
-Experiment with these commands in the Redis Playground:
-
-- [Other vector set commands](https://redis.io/try/sandbox?queryId=VECTOR_SETS_INSIGHTS_VCARD&catId=VECTOR_SETS_INSIGHTS)
+Experiment with [other Vector Set commands](https://redis.io/try/sandbox?queryId=VECTOR_SETS_INSIGHTS_VCARD&catId=VECTOR_SETS_INSIGHTS) in the Redis Sandbox:
 
 ![other-vcard](./images/other-vcard.png)
 
-Tip: In the Playground, you can switch between commands in the left sidebar and instantly see their output.
+Tip: In the Sandbox, you can select a command from the left sidebar, click the Run button, and instantly see the output.
 
 ## Ready to Use Vector Sets?
 
@@ -449,14 +460,12 @@ You’ve learned how to:
 
 - Add elements to a Vector Set.
 - Run similarity searches using existing or custom vectors.
-- Use utility commands to inspect and explore your data.
+- Use other utility commands to inspect and explore your data.
 
-Vector Sets bring fast, scalable similarity search to Redis — perfect for semantic search, recommendations, and AI-powered retrieval.
+Vector Sets provide fast, scalable similarity search in Redis — perfect for semantic search, recommendations, and AI-powered retrieval.
 
 **Next Steps:**
 
-- Try the Redis Playground links in this guide.
+- Try the Redis Sandbox links in this guide.
 - Import your own data and test queries.
-- Explore the full docs: [VectorSets data-type](https://redis.io/docs/latest/develop/data-types/vector-sets/)
-
-You’re now ready to build your own similarity search applications with Redis Vector Sets.
+- Explore full docs: [Vector Sets data type](https://redis.io/docs/latest/develop/data-types/vector-sets/)
